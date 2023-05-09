@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "cypress": "^12.11.0",
+    "dayjs": "^1.11.7",
+    "moment": "^2.29.4"
+  },
+  "name": "tst",
+  "version": "1.0.0",
+  "description": "Testes automatizados primeiro projeto",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx cypress open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucasgomesgoulart/testes-automatizados.git"
+  },
+  "author": "Lucas Goulart",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lucasgomesgoulart/testes-automatizados/issues"
+  },
+  "homepage": "https://github.com/lucasgomesgoulart/testes-automatizados#readme",
+  "devDependencies": {
+    "cypress-file-upload": "^5.0.8"
+  }
+}
