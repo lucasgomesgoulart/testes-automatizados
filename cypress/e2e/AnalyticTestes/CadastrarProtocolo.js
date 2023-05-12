@@ -10,8 +10,8 @@ describe('Analytic Care', () => {
     it('fazer login', () => {
 
         //login
-        cy.get(':nth-child(1) > .mb-3 > .form-control').type('analistateste');
-        cy.get(':nth-child(2) > .mb-3 > .form-control').type('Teste@123');
+        cy.get(':nth-child(1) > .mb-3 > .form-control').type(Cypress.env('username'));
+        cy.get(':nth-child(2) > .mb-3 > .form-control').type(Cypress.env('password'));
         cy.get('.button-login > .btn').click();
 
         //esperar a pagina carregar
@@ -28,8 +28,6 @@ describe('Analytic Care', () => {
 
         cy.get('#react-select-2-option-0')
             .click();
-
-
 
         //seleciona o plano para Regulamentado e valida o select
         cy.get(':nth-child(2) > .col-md-2 > .form-control-input > .d-flex > .form-control').select('Regulamentado')
@@ -133,20 +131,6 @@ describe('Analytic Care', () => {
         // preenche o campo de materiais
         cy.preencherFormulario();
 
-        //clica para editar o material
-        cy.scrollTo('top')
-        cy.get(':nth-child(2) > .rt-tr > [style="justify-content: center; flex: 35 0 auto; width: 35px;"] > .d-flex > .action-buttons > :nth-child(1) > .btn')
-            .click();
-
-        //valida os inputs se estão visiveis para poder escrever
-        cy.get('[style="flex: 35 0 auto; width: 35px;"] > .font-14 > .w-100')
-            .should('be.visible')
-        cy.get('[style="flex: 35 0 auto; width: 35px;"] > .font-14 > .w-100')
-            .should('be.visible')
-        cy.get('[style="flex: 35 0 auto; width: 35px;"] > .font-14 > .w-100')
-            .should('be.visible')
-
-
         //fecha botao de editar material
         cy.get(':nth-child(2) > .rt-tr > [style="justify-content: center; flex: 35 0 auto; width: 35px;"] > .d-flex > .action-buttons > :nth-child(1) > .btn')
             .click();
@@ -155,6 +139,8 @@ describe('Analytic Care', () => {
         cy.get('.active > .pt-0 > .w-100.row > .d-flex > :nth-child(2)')
             .click();
 
+
+        cy.wait(3000)
         cy.get('.modal-content > .modal-footer').contains('Confirmar')
             .click();
 
