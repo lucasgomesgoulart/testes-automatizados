@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "cypress": "^12.11.0",
+    "cypress-wait-until": "^1.7.2",
     "dayjs": "^1.11.7",
     "moment": "^2.29.4"
   },
@@ -22,6 +23,10 @@
   },
   "homepage": "https://github.com/lucasgomesgoulart/testes-automatizados#readme",
   "devDependencies": {
-    "cypress-file-upload": "^5.0.8"
+    "@faker-js/faker": "^7.6.0",
+    "cypress-file-upload": "^5.0.8",
+    "cypress-slow-down": "^1.2.1",
+    "faker": "^6.6.6",
+    "mochawesome": "^7.1.3"
   }
 }

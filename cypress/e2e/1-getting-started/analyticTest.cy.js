@@ -1,4 +1,6 @@
 import 'cypress-file-upload';
+import { cadastraProcedimento } from './cadastrarProcedimentos';
+
 
 describe('Analytic Care', () => {
     beforeEach(() => {
@@ -19,13 +21,15 @@ describe('Analytic Care', () => {
         cy.get('.bg-white > :nth-child(2) > :nth-child(2)').click();
 
         // escreve Operadora teste no select
-        cy.get('.pb-4 > .card-body > :nth-child(2) > .col-md-3 > .form-control-input > .align-items-center > .w-100 > .css-yk16xz-control > .css-1hwfws3')
-            .type('Operadora Teste');
+        const text = 'Teste';
 
-        //Seleciona a operadora teste
-        cy.get('.css-26l3qy-menu')
-            .contains('Operadora Teste')
+        cy.get('.pb-4 > .card-body > :nth-child(2) > .col-md-3 > .form-control-input > .align-items-center > .w-100 > .css-yk16xz-control > .css-1hwfws3')
+            .type(text, { delay: 100 });
+
+        cy.get('#react-select-2-option-0')
             .click();
+
+
 
         //seleciona o plano para Regulamentado e valida o select
         cy.get(':nth-child(2) > .col-md-2 > .form-control-input > .d-flex > .form-control').select('Regulamentado')
@@ -97,24 +101,63 @@ describe('Analytic Care', () => {
 
         //escreve algo na solicitação:
         cy.get('.textarea-input').type('!@#$%¨&*()_+{}`^?:><|\*+-/')
+        cy.get('.switch-box-checked').click();
 
-
-        //adiciona prestador
-
-        const getNum = () => {
-            const randomNumber = Math.floor(Math.random() * Math.pow(10, 14));
-            return randomNumber
-        }
-
-
-        cy.get('.collapse > :nth-child(3) > :nth-child(1) > .form-control-input > .form-control').click();
-        cy.get('.collapse > :nth-child(3) > :nth-child(1) > .form-control-input > .form-control').type(getNum())
-        cy.get('.collapse > :nth-child(3) > :nth-child(2) > .form-control-input > .form-control').type('Teste razao social')
-        cy.get('.collapse > :nth-child(3) > :nth-child(3) > .form-control-input > .form-control').type('teste nome fantasia')
-
-        //cadastrar
+        // insere o pdf teste
         cy.get('.col-md-12 > .w-100 > .d-flex > :nth-child(2)').click();
+        cy.wait(3000)
+        cy.get('.custom-file-label').selectFile('cypress/fixtures/teste.pdf');
 
-        cy.get(':nth-child(1) > .d-flex > .form-control').attachFile('alegre.jpg');        
+        //seleciona o tipo
+        cy.get(':nth-child(2) > .d-flex > .form-control').contains('Exame')
+        cy.get(':nth-child(2) > .d-flex > .form-control').contains('Orçamento')
+        cy.get(':nth-child(2) > .d-flex > .form-control').contains('Pedido do Procedimento')
+        cy.get(':nth-child(2) > .d-flex > .form-control').contains('Relatório do Profissional Assistente')
+        cy.get(':nth-child(2) > .d-flex > .form-control').contains('Outros')
+        cy.get(':nth-child(2) > .d-flex > .form-control').select('Outros')
+        cy.get('.pt-0 > .gutter-x-14 > .false > .form-control').type('Teste !@#$%¨&*()`^{}')
+
+        //clicar em enviar anexo
+        cy.get('.w-50 > .btn').click();
+
+        //sai da pagina de anexo
+        cy.get('.active > .pt-0 > .justify-content-center > .d-flex > :nth-child(2)').click();
+
+        //cadastra procedimento
+        cadastraProcedimento()
+
+        //avança proxima aba
+        cy.get('.active > .pt-0 > .w-100.justify-content-center > .d-flex > :nth-child(2)').click();
+
+
+        // preenche o campo de materiais
+        cy.preencherFormulario();
+
+        //clica para editar o material
+        cy.scrollTo('top')
+        cy.get(':nth-child(2) > .rt-tr > [style="justify-content: center; flex: 35 0 auto; width: 35px;"] > .d-flex > .action-buttons > :nth-child(1) > .btn')
+            .click();
+
+        //valida os inputs se estão visiveis para poder escrever
+        cy.get('[style="flex: 35 0 auto; width: 35px;"] > .font-14 > .w-100')
+            .should('be.visible')
+        cy.get('[style="flex: 35 0 auto; width: 35px;"] > .font-14 > .w-100')
+            .should('be.visible')
+        cy.get('[style="flex: 35 0 auto; width: 35px;"] > .font-14 > .w-100')
+            .should('be.visible')
+
+
+        //fecha botao de editar material
+        cy.get(':nth-child(2) > .rt-tr > [style="justify-content: center; flex: 35 0 auto; width: 35px;"] > .d-flex > .action-buttons > :nth-child(1) > .btn')
+            .click();
+
+        //  concluir
+        cy.get('.active > .pt-0 > .w-100.row > .d-flex > :nth-child(2)')
+            .click();
+
+        cy.get('.modal-content > .modal-footer').contains('Confirmar')
+            .click();
+
     });
 })
+
