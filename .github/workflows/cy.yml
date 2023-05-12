@@ -16,13 +16,13 @@ jobs:
       - name: 'UI Tests - Chrome'
         uses: cypress-io/github-action@v4
         with:
-          install-command: yarn install
+          install-command: npm install
           wait-on: ${{ secrets.BASE_URL }} 
           wait-on-timeout: 120
           browser: chrome
           record: true
           group: 'UI - Chrome'
-          spec: cypress/e2e/AnalyticTestes/CadastrarProtocolo.cy.js
+          spec: cypress/e2e/AnalyticTestes/CadastrarProtocolo
           config-file: cypress.config.js
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
