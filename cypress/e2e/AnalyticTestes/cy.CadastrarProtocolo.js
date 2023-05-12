@@ -1,5 +1,5 @@
 import 'cypress-file-upload';
-import { cadastraProcedimento } from './cadastrarProcedimentos';
+import { cadastraProcedimento } from './cadastrarProcedimentos.spec.cy';
 
 
 describe('Analytic Care', () => {
