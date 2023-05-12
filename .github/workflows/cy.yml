@@ -9,7 +9,4 @@ jobs:
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
-        uses: cypress-io/github-action@v5
-        with:
-          record: true
-          key: 15a1c1e5-b763-4393-95d6-1a13106917cc
+        run: npx cypress run --record --key ${{ secrets.CYPRESS_RECORD_KEY }} --browser chrome --config-file cypress.json --config video=false --env configFile=qa --group ${{ github.event.inputs.group }} --parallel true --ci-build-id ${{ github.run_id }} --spec /home/runner/work/testes-automatizados/testes-automatizados/cypress/e2e/AnalyticTestes/CadastrarProtocolo.js
