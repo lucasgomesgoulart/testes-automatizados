@@ -7,7 +7,7 @@ describe('Analytic Care', () => {
         cy.visit('https://dev.analyticare.com.br/authentication/login')
     })
 
-    it('fazer login', () => {
+    it('Cadastrar protocolo completo - analistateste', () => {
 
         //login
         cy.get(':nth-child(1) > .mb-3 > .form-control').type(Cypress.env('username'));

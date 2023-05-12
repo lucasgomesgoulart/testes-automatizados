@@ -1,4 +1,7 @@
 import { faker } from "@faker-js/faker"
+import '@shelex/cypress-allure-plugin';
+
+
 
 Cypress.Commands.add('login', (username, password) => {
     {
