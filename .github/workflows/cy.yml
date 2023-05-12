@@ -1,20 +1,29 @@
-name: Cypress Tests
+name: Cypress Regression Tests
+
 on: [push]
+
 jobs:
-  cypress-run:
+
+  ui-chrome-tests:
     runs-on: ubuntu-latest
-    # Runs tests in parallel with matrix strategy https://docs.cypress.io/guides/guides/parallelization
-    # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
-    # Also see warning here https://github.com/cypress-io/github-action#parallel
+    container: cypress/browsers:node14.17.0-chrome88-ff89
     strategy:
-      fail-fast: false # https://github.com/cypress-io/github-action/issues/48
-      matrix:
-        containers: [1, 2] # Uses 2 parallel instances
+      fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      # Install NPM dependencies, cache them correctly
-      # and run all Cypress tests
-      env: CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-      - name: Cypress run
-        run: npx cypress run --config-file cypress.config.js --record --key ${{ secrets.CYPRESS_RECORD_KEY }} --browser chrome --config video=false --env configFile=qa --group ${{ github.event.inputs.group }} --parallel true --ci-build-id ${{ github.run_id }} --spec /home/runner/work/testes-automatizados/testes-automatizados/cypress/e2e/AnalyticTestes/*.cy.{js,jsx,ts,tsx}
+      
+      - name: 'UI Tests - Chrome'
+        uses: cypress-io/github-action@v4
+        with:
+          install-command: yarn install
+          wait-on: ${{ secrets.BASE_URL }} 
+          wait-on-timeout: 120
+          browser: chrome
+          record: true
+          group: 'UI - Chrome'
+          spec: cypress/e2e/*
+          config-file: cypress.config.js
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
