@@ -15,5 +15,6 @@ jobs:
         uses: actions/checkout@v3
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
+      env: CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       - name: Cypress run
         run: npx cypress run --config-file cypress.config.js --record --key ${{ secrets.CYPRESS_RECORD_KEY }} --browser chrome --config video=false --env configFile=qa --group ${{ github.event.inputs.group }} --parallel true --ci-build-id ${{ github.run_id }} --spec /home/runner/work/testes-automatizados/testes-automatizados/cypress/e2e/AnalyticTestes/*.cy.{js,jsx,ts,tsx}
