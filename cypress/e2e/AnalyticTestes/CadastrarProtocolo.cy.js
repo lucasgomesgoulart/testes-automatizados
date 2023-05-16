@@ -1,19 +1,17 @@
 import 'cypress-file-upload';
-import { cadastraProcedimento } from './cadastrarProcedimentos.spec.cy';
+import { cadastraProcedimento } from './cadastrarProcedimentos';
 
 
 describe('Analytic Care', () => {
     beforeEach(() => {
-        cy.visit('https://dev.analyticare.com.br/authentication/login')
+        cy.visit('https://app.analyticare.com.br/authentication/login')
+        //login
+        cy.get(':nth-child(1) > .mb-3 > .form-control').type(Cypress.env('analista'));
+        cy.get(':nth-child(2) > .mb-3 > .form-control').type(Cypress.env('password'));
+        cy.get('.button-login > .btn').click();
     })
 
     it('Cadastrar protocolo completo - analistateste', () => {
-
-        //login
-        cy.get(':nth-child(1) > .mb-3 > .form-control').type(Cypress.env('username'));
-        cy.get(':nth-child(2) > .mb-3 > .form-control').type(Cypress.env('password'));
-        cy.get('.button-login > .btn').click();
-
         //esperar a pagina carregar
         cy.url().should('include', '/protocolos/listar');
 
@@ -88,14 +86,24 @@ describe('Analytic Care', () => {
 
 
         //Dados do BEN
+        // cy.cadastraBenef()
         //preenche o cpf com 123 e clica no cpf teste
-        cy.get('.active > :nth-child(3) > .card-body > .mb-5 > .flex-column > .form-control-input > .align-items-center > .w-100 > .css-yk16xz-control > .css-1hwfws3').type('123')
-        cy.get('#react-select-4-option-0').click();
+        cy.get('.active > :nth-child(3) > .card-body > .mb-5 > .flex-column > .form-control-input > .align-items-center > .w-100 > .css-yk16xz-control > .css-1hwfws3')
+            .type('1')
+
+        cy.get('#react-select-4-option-0')
+            .should('have.text', 'Beneficiário Teste (456.167.872-72)')
+            .click()
+
 
         //seleciona o MA 
-        cy.get(':nth-child(4) > .card-body > :nth-child(2) > .flex-column > .form-control-input > .align-items-center > .w-100 > .css-yk16xz-control > .css-1hwfws3').type('121322')
-        cy.get('#react-select-5-option-0').click();
+        cy.get(':nth-child(4) > .card-body > :nth-child(2) > .flex-column > .form-control-input > .align-items-center > .w-100 > .css-yk16xz-control > .css-1hwfws3')
+            .type('1')
 
+        cy.get('#react-select-5-option-0')
+            .should('have.text', 'Médico Desempatador (CRM/SC - 22222)')
+            .click()
+        // cy.get('#react-select-5-option-0').click();
 
         //escreve algo na solicitação:
         cy.get('.textarea-input').type('!@#$%¨&*()_+{}`^?:><|\*+-/')
@@ -140,10 +148,22 @@ describe('Analytic Care', () => {
             .click();
 
 
-        cy.wait(3000)
-        cy.get('.modal-content > .modal-footer').contains('Confirmar')
-            .click();
+        cy.wait(5000)
 
+        let protocolo = ''
+        cy.get('.modal-title > b')
+            .invoke('text')
+            .then((text) => {
+                console.log(text); // output: 123321
+                protocolo = text
+                cy.get('.modal-content > .modal-footer').contains('Confirmar')
+                    .click();
+
+                cy.url().should('include', '/protocolos/listar')
+
+                cy.get(':nth-child(1) > .rt-tr > :nth-child(1) > .d-flex > .m-0').contains(protocolo).click()
+            });
+        cy.end()
     });
 })
 

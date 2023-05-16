@@ -6,7 +6,7 @@ module.exports = defineConfig({
 
 
   e2e: {
-    baseUrl: 'https://dev.analyticare.com.br',
+    baseUrl: 'https://app.analyticare.com.br/authentication/login',
 
     mochaOptions: {
       reporter: "mochawesome",

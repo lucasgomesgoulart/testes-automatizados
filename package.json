@@ -3,6 +3,7 @@
     "cypress": "^12.11.0",
     "cypress-wait-until": "^1.7.2",
     "dayjs": "^1.11.7",
+    "faker-br": "^0.4.1",
     "moment": "^2.29.4"
   },
   "name": "tst",
