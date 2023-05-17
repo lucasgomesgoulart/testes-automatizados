@@ -1,6 +1,4 @@
 import 'cypress-file-upload';
-import { cadastraProcedimento } from './cadastrarProcedimentos';
-
 
 describe('Analytic Care', () => {
     beforeEach(() => {
@@ -92,7 +90,7 @@ describe('Analytic Care', () => {
             .type('1')
 
         cy.get('#react-select-4-option-0')
-            .should('have.text', 'Beneficiário Teste (456.167.872-72)')
+            .should('have.text', 'Teste alteracao automatizado (085.353.765-21)')
             .click()
 
 
@@ -130,7 +128,7 @@ describe('Analytic Care', () => {
         cy.get('.active > .pt-0 > .justify-content-center > .d-flex > :nth-child(2)').click();
 
         //cadastra procedimento
-        cadastraProcedimento()
+        cy.cadastrarProcedimento()
 
         //avança proxima aba
         cy.get('.active > .pt-0 > .w-100.justify-content-center > .d-flex > :nth-child(2)').click();

@@ -3,7 +3,7 @@ const { defineConfig } = require("cypress");
 module.exports = defineConfig({
   watchForFileChanges: false,
   projectId: "orrxpm",
-
+  
 
   e2e: {
     baseUrl: 'https://app.analyticare.com.br/authentication/login',
