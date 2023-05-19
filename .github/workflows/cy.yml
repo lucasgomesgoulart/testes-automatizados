@@ -1,9 +1,8 @@
-name: Cypress Regression Tests
+name: Cypress Tests
 
 on: [push]
 
 jobs:
-
   ui-chrome-tests:
     runs-on: ubuntu-latest
     container: cypress/browsers:node14.17.0-chrome88-ff89
@@ -17,6 +16,7 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           install-command: npm install
+          start: npm run test
           wait-on: ${{ secrets.BASE_URL }} 
           wait-on-timeout: 120
           browser: chrome

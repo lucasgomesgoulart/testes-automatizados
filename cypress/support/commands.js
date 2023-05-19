@@ -2,6 +2,15 @@ import { faker } from "@faker-js/faker"
 var fakerBr = require('faker-br');
 import '@shelex/cypress-allure-plugin';
 
+Cypress.Commands.add('geraTextoLoren', () => {
+    const numeroParagrafos = 5; // Número de parágrafos desejado
+    let texto = '';
+
+    for (let i = 0; i < numeroParagrafos; i++) {
+        texto += faker.lorem.paragraphs(1) + '\n\n'; // Adiciona um parágrafo e quebras de linha
+    }
+    return texto;
+})
 
 Cypress.Commands.add('login', (username, password) => {
     {
@@ -67,86 +76,46 @@ Cypress.Commands.add('preencherFormulario', () => {
 });
 
 Cypress.Commands.add('EditaEValidaBenef', () => {
-    cy.get('.service-guide-main-wrapper > .d-flex.w-100 > :nth-child(2)').scrollIntoView()
-    //beneficiario altera e valida se salvou
-    cy.get(':nth-child(2) > .service-guide-title > :nth-child(2) > svg > path').scrollIntoView()
+    const beneficiaryData = {
+        carteiraNumber: '9988776655',
+        validityCard: '2024-12-12',
+        cpf: '08535376521',
+        beneficiaryBirthDate: '1990-12-12',
+        alteration: 'Teste alteracao automatizado',
+        email: 'teste@automatico.com.br',
+        cpfAlternative: '22222222222',
+        phoneNumber: '(33) 33333-3333'
+    };
 
     cy.get(':nth-child(2) > .service-guide-title > :nth-child(2) > svg > path')
-        .click()
+        .click();
 
-    cy.get('#carteiraNumber')
-        .scrollIntoView()
-        .clear()
-        .type('9988776655')
-
-    cy.get('#validityCard')
-        .clear()
-        .type('2024-12-12')
-
+    cy.get('#carteiraNumber').clear().type(beneficiaryData.carteiraNumber);
+    cy.get('#validityCard').clear().type(beneficiaryData.validityCard);
     cy.get('.d-flex.w-100 > :nth-child(2) > .service-guide-wrapper-grid-5-col > :nth-child(3) > .form-control-input > .form-control')
         .clear()
-        .type('08535376521')
-        .scrollIntoView()
-    cy.get(':nth-child(4) > #beneficiaryBirthDate')
-        .clear()
-        .type('1990-12-12')
+        .type(beneficiaryData.cpf);
+    cy.get(':nth-child(4) > #beneficiaryBirthDate').clear().type(beneficiaryData.beneficiaryBirthDate);
+    cy.get(':nth-child(6) > .form-control-input > .form-control').clear().type(beneficiaryData.alteration);
+    cy.get(':nth-child(8) > #emailBnf').clear().type(beneficiaryData.email);
+    cy.get(':nth-child(9) > .form-control-input > .form-control').clear().type(beneficiaryData.cpfAlternative);
+    cy.get(':nth-child(10) > .form-control-input > .form-control').clear().type(beneficiaryData.phoneNumber);
+    cy.get('.service-guide-grid-item-5-col > .justify-content-end > .align-items-center').click();
 
-    cy.get(':nth-child(6) > .form-control-input > .form-control')
-        .scrollIntoView()
-        .clear()
-        .type('Teste alteracao automatizado')
-
-    cy.get(':nth-child(8) > #emailBnf')
-        .scrollIntoView()
-        .clear()
-        .type('teste@automatico.com.br')
-
-    cy.get(':nth-child(9) > .form-control-input > .form-control')
-        .clear()
-        .type('22222222222')
-
-    cy.get(':nth-child(10) > .form-control-input > .form-control')
-        .clear()
-        .type('(33) 33333-3333')
-
-    cy.get('.service-guide-grid-item-5-col > .justify-content-end > .align-items-center')
-        .click()
-
-    // Verifica se o número da carteira foi salvo corretamente
-    cy.get('#carteiraNumber')
-        .should('have.value', '9988776655');
-
-    // Verifica se a validade do cartão foi salva corretamente
-    cy.get('#validityCard')
-        .should('have.value', '2024-12-12');
-
-    // Verifica se o CPF foi salvo corretamente
+    // Verify if the beneficiary data was saved correctly
+    cy.get('#carteiraNumber').should('have.value', beneficiaryData.carteiraNumber);
+    cy.get('#validityCard').should('have.value', beneficiaryData.validityCard);
     cy.get('.d-flex.w-100 > :nth-child(2) > .service-guide-wrapper-grid-5-col > :nth-child(3) > .form-control-input > .input-default-editable')
         .should('have.value', '085.353.765-21');
+    cy.get(':nth-child(4) > #beneficiaryBirthDate').should('have.value', beneficiaryData.beneficiaryBirthDate);
+    cy.get(':nth-child(6) > .form-control-input > .form-control').should('have.value', beneficiaryData.alteration);
+    cy.get(':nth-child(8) > #emailBnf').should('have.value', beneficiaryData.email);
+    cy.get(':nth-child(9) > .form-control-input > .input-default-editable').should('have.value', '(22) 22222-2222');
+    cy.get(':nth-child(10) > .form-control-input > .input-default-editable').should('have.value', beneficiaryData.phoneNumber);
+});
 
-    // Verifica se a data de nascimento do beneficiário foi salva corretamente
-    cy.get(':nth-child(4) > #beneficiaryBirthDate')
-        .should('have.value', '1990-12-12');
-
-    // Verifica se o campo de alteração automatizada foi salvo corretamente
-    cy.get(':nth-child(6) > .form-control-input > .form-control')
-        .should('have.value', 'Teste alteracao automatizado');
-
-    // Verifica se o e-mail foi salvo corretamente
-    cy.get(':nth-child(8) > #emailBnf')
-        .should('have.value', 'teste@automatico.com.br');
-
-    // Verifica se o CPF foi salvo corretamente
-    cy.get(':nth-child(9) > .form-control-input > .input-default-editable')
-        .should('have.value', '(22) 22222-2222');
-
-    // Verifica se o número de telefone foi salvo corretamente
-    cy.get(':nth-child(10) > .form-control-input > .input-default-editable')
-        .should('have.value', '(33) 33333-3333');
-})
 
 Cypress.Commands.add('caracteristicas_alteracao_validacao', () => {
-    cy.get('.service-guide-main-wrapper > .d-flex.w-100 > :nth-child(1)').scrollIntoView()
     ///valida se todos estão ali
     cy.get('.service-guide-wrapper-grid-6-col > :nth-child(1)').contains('SADT')
     cy.get('.service-guide-wrapper-grid-6-col > :nth-child(1)').contains('Internação')
@@ -162,7 +131,7 @@ Cypress.Commands.add('caracteristicas_alteracao_validacao', () => {
     cy.get('.service-guide-wrapper-grid-6-col > :nth-child(5) > .d-flex').contains('Prestador')
 
     //preenche os campos
-    cy.get('#guia_sadt').scrollIntoView()
+    cy.get('#guia_sadt')
         .click()
     cy.get('.service-guide-wrapper-grid-6-col > :nth-child(5) > .d-flex')
         .click()
@@ -281,12 +250,8 @@ function getHora() {
 Cypress.Commands.add('Analisa_materiais', () => {
     //abre o primeiro material
     cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody > :nth-child(1) > .flex-row > div.d-flex > .d-flex > .rt-tr > .show-pointer')
-        .scrollIntoView();
-
-    cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody > :nth-child(1) > .flex-row > div.d-flex > .d-flex > .rt-tr > .show-pointer')
         .click()
 
-    cy.wait(2500)
     //marca pertinente
     cy.get(':nth-child(1) > .container > form > :nth-child(1) > .pl-0 > .decisions-container > :nth-child(1) > .input-radio-box')
         .click()
@@ -299,7 +264,7 @@ Cypress.Commands.add('Analisa_materiais', () => {
         .clear()
         .type(`alteração automática, ${getHora()}`, { delay: 50 })
     //salva
-    cy.get('.col-lg-2 > .btn')
+    cy.get('.mb-4 > .col-lg-2 > .btn')
         .click()
     cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody > :nth-child(1) > .flex-row > div.d-flex > .d-flex > .rt-tr > .show-pointer')
         .click()
@@ -329,7 +294,7 @@ Cypress.Commands.add('Analisa_materiais', () => {
         .clear()
         .type(`alteração automática, ${getHora()}`, { delay: 50 })
     //salva
-    cy.get('.col-lg-2 > .btn')
+    cy.get('.mb-4 > .col-lg-2 > .btn')
         .click()
     cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody > :nth-child(2) > .flex-row > div.d-flex > .d-flex > .rt-tr > .show-pointer')
         .click()
@@ -344,10 +309,6 @@ Cypress.Commands.add('Analisa_materiais', () => {
     //valida se apareceu o motivo da divergencia, porém nao interage
     cy.get('form > :nth-child(1) > :nth-child(3) > .font-16')
         .should('be.visible')
-
-    //quantidade pertinente
-    cy.get('.pr-0 > .form-control-input > .form-control')
-        .type('2')
 
     cy.wait(500)
 
@@ -364,7 +325,7 @@ Cypress.Commands.add('Analisa_materiais', () => {
         .clear()
         .type(`alteração automática, ${getHora()}`, { delay: 50 })
     //salva
-    cy.get('.col-lg-2 > .btn')
+    cy.get('.mb-4 > .col-lg-2 > .btn')
         .click()
     cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody > :nth-child(3) > .flex-row > div.d-flex > .d-flex > .rt-tr > .show-pointer')
         .click()

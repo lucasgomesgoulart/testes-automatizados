@@ -19,13 +19,12 @@ it('Revisar protocolo', () => {
         }
     })
 
-    cy.get(':nth-child(1) > .service-guide-title > :nth-child(2)', { timeout: 5000 })
+    cy.get(':nth-child(1) > .service-guide-title > :nth-child(2)')
         .click()
 
-    // CARACTERISTICAS
-    // Valida os inputs, edita as informações e valida se salvou
     cy.caracteristicas_alteracao_validacao()
     cy.wait(500)
+
     //edita e valida o beneficiario
     cy.EditaEValidaBenef()
 
@@ -78,17 +77,20 @@ it('Revisar protocolo', () => {
         if ($button.length > 0) {
             cy.get('.mr-5 > .d-flex > .btn-primary')
                 .click()
+            cy.get('.pro-pic > .rounded-circle')
+                .click()
+
         } else {
+
             cy.get('.pro-pic > .rounded-circle')
                 .click()
 
             cy.get('.modal-user-button')
                 .click()
+
+            cy.get('.d-block > .btn-primary')
+                .click()
         }
     });
-
-
-
-
 })
 
