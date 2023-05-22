@@ -2,27 +2,6 @@ import { faker } from "@faker-js/faker"
 var fakerBr = require('faker-br');
 import '@shelex/cypress-allure-plugin';
 
-Cypress.Commands.add('geraTextoLoren', () => {
-    const numeroParagrafos = 5; // Número de parágrafos desejado
-    let texto = '';
-
-    for (let i = 0; i < numeroParagrafos; i++) {
-        texto += faker.lorem.paragraphs(1) + '\n\n'; // Adiciona um parágrafo e quebras de linha
-    }
-    return texto;
-})
-
-Cypress.Commands.add('login', (username, password) => {
-    {
-        cy.visit('/https://dev.analyticare.com.br/authentication/login')
-        cy.get(':nth-child(1) > .mb-3 > .form-control').type(username);
-        cy.get(':nth-child(2) > .mb-3 > .form-control').type(password);
-        cy.get('.button-login > .btn').click();
-        cy.wait(3000)
-    }
-})
-
-
 Cypress.Commands.add('cadastraBenef', () => {
     //nome
     cy.get(':nth-child(3) > .card-body > :nth-child(3) > .col-md-4 > .form-control-input > .form-control')
@@ -60,18 +39,16 @@ Cypress.Commands.add('cadastraBenef', () => {
 
 })
 
-Cypress.Commands.add('preencherFormulario', () => {
+Cypress.Commands.add('cadastraMaterial', () => {
     cy.wrap(Array(3).fill(null)).each(() => {
-        cy.get(':nth-child(1) > .col-md-4 > .form-control-input > .form-control')
-            .type(faker.finance.creditCardNumber(),);
-
-        cy.get('.col-md-6 > .form-control-input > .form-control')
-            .type(faker.commerce.product());
-
-        cy.get('.mt-4.align-items-start > :nth-child(3) > .form-control-input > .form-control')
-            .type('1500',);
-
-        cy.get('#add-material').click();
+        cy.get(':nth-child(1) > .col-md-4 > .form-control-input > .form-control').type(faker.finance.creditCardNumber())
+        cy.wait(500)
+        cy.get('.col-md-6 > .form-control-input > .form-control').type(faker.commerce.product())
+        cy.wait(500)
+        cy.get('.mt-4.align-items-start > :nth-child(3) > .form-control-input > .form-control').type('1500',);
+        cy.wait(500)
+        cy.get('#add-material').click()
+        cy.wait(500)
     });
 });
 
@@ -247,11 +224,10 @@ function getHora() {
     return formattedDate;
 }
 
-Cypress.Commands.add('Analisa_materiais', () => {
+Cypress.Commands.add('analistaMatareial1', () => {
     //abre o primeiro material
     cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody > :nth-child(1) > .flex-row > div.d-flex > .d-flex > .rt-tr > .show-pointer')
         .click()
-
     //marca pertinente
     cy.get(':nth-child(1) > .container > form > :nth-child(1) > .pl-0 > .decisions-container > :nth-child(1) > .input-radio-box')
         .click()
@@ -266,67 +242,60 @@ Cypress.Commands.add('Analisa_materiais', () => {
     //salva
     cy.get('.mb-4 > .col-lg-2 > .btn')
         .click()
+    //fecha material 1
     cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody > :nth-child(1) > .flex-row > div.d-flex > .d-flex > .rt-tr > .show-pointer')
         .click()
-    ////////////////////////////////////////////////////////////////////////////////////////
-    //segundo material
-    cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody > :nth-child(2) > .flex-row > div.d-flex > .d-flex > .rt-tr > .show-pointer')
-        .click()
-    //marca NÃO pertinente
-    cy.get('.decisions-container > :nth-child(2) > .input-radio-box')
-        .click()
-    //valida se apareceu o motivo da divergencia, porém nao interage
-    cy.get('form > :nth-child(1) > :nth-child(3) > .font-16')
-        .should('be.visible')
+})
 
-    cy.wait(500)
+Cypress.Commands.add('analistaMatareial2', () => {
+    //abre
+    cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody > :nth-child(2) > .flex-row > div.w-100 > .w-100 > .rt-tr > .show-pointer')
+        .click()
 
-    //justificativa
+    //seleciona nao pertinente
+    cy.get('.decisions-container > :nth-child(2) > .input-radio-box').click()
+
+    //escreve justificativa
     cy.get('.mt-3.pl-0 > .form-control')
-        .type(`Justificativa alterada automaticamente ${getHora()}`, { delay: 50 })
+        .type(`alteração automática, ${getHora()}`, { delay: 50 })
+
+    //valor unitario
+    cy.get('.py-5 > :nth-child(2) > .form-control-input > .form-control')
+        .type('999')
+
+    //informacao complementar
+    cy.get('.col-lg-12 > div > .form-control')
+        .type(`alteração automática, ${getHora()}`, { delay: 50 })
+
+    //salva
+    cy.get('.mb-4 > .col-lg-2 > .btn').click()
+
+    // fecha material
+    cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody > :nth-child(2) > .flex-row > div.w-100 > .w-100 > .rt-tr > .show-pointer')
+        .click()
+})
+
+Cypress.Commands.add('analistaMatareial3', () => {
+    // abre
+    cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody > :nth-child(3) > .flex-row > div.w-100 > .w-100 > .rt-tr > .show-pointer').click()
+
+    // marca pertinente com ressalvas
+    cy.get('.decisions-container > :nth-child(3) > .input-radio-box').click()
+
+    // quantidade pertinente
+    cy.get('.pr-0 > .form-control-input > .form-control').type('1')
+
+    // justificativa
+    cy.get('.mt-3.pl-0 > .form-control')
+        .type(`alteração automática, ${getHora()}`, { delay: 50 })
 
     // valor unitario
-    cy.get('.py-5 > :nth-child(2) > .form-control-input > .form-control')
-        .clear()
-        .type('199')
-    //informacoes complementares
-    cy.get('.mt-4 > div > .form-control')
-        .clear()
-        .type(`alteração automática, ${getHora()}`, { delay: 50 })
+    cy.get('.py-5 > :nth-child(2) > .form-control-input > .form-control').type('500')
+
+    //complementar
+    cy.get('.col-lg-12 > div > .form-control').type(`alteração automática, ${getHora()}`, { delay: 50 })
+
     //salva
-    cy.get('.mb-4 > .col-lg-2 > .btn')
-        .click()
-    cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody > :nth-child(2) > .flex-row > div.d-flex > .d-flex > .rt-tr > .show-pointer')
-        .click()
-    ///////////////////////////////////////////////////////////////////////////////////////
+    cy.get('.mb-4 > .col-lg-2 > .btn').click()
 
-    //3 material
-    cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody > :nth-child(3) > .flex-row > div.d-flex > .d-flex > .rt-tr > .show-pointer')
-        .click()
-    //marca pertinente com ressalva
-    cy.get('.decisions-container > :nth-child(3) > .input-radio-box')
-        .click()
-    //valida se apareceu o motivo da divergencia, porém nao interage
-    cy.get('form > :nth-child(1) > :nth-child(3) > .font-16')
-        .should('be.visible')
-
-    cy.wait(500)
-
-    //justificativa
-    cy.get('.mt-3.pl-0 > .form-control')
-        .type(`Justificativa alterada automaticamente ${getHora()}`, { delay: 50 })
-
-    // valor unitario
-    cy.get('.py-5 > :nth-child(2) > .form-control-input > .form-control')
-        .clear()
-        .type('129')
-    //informacoes complementares
-    cy.get('.mt-4 > div > .form-control')
-        .clear()
-        .type(`alteração automática, ${getHora()}`, { delay: 50 })
-    //salva
-    cy.get('.mb-4 > .col-lg-2 > .btn')
-        .click()
-    cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody > :nth-child(3) > .flex-row > div.d-flex > .d-flex > .rt-tr > .show-pointer')
-        .click()
 })

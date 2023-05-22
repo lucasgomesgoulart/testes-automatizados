@@ -28,7 +28,7 @@
     "@shelex/cypress-allure-plugin": "^2.39.1",
     "cypress-file-upload": "^5.0.8",
     "cypress-slow-down": "^1.2.1",
-    "faker": "^6.6.6",
+    "faker": "^5.5.3",
     "mochawesome": "^7.1.3"
   }
 }

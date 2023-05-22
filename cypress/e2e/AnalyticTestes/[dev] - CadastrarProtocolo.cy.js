@@ -1,4 +1,5 @@
-import 'cypress-file-upload';
+import 'cypress-file-upload'
+import { faker } from "@faker-js/faker";
 
 it('Cadastrar protocolo - analistateste', () => {
     cy.visit('https://dev.analyticare.com.br/authentication/login')
@@ -129,7 +130,7 @@ it('Cadastrar protocolo - analistateste', () => {
     cy.get('.active > .pt-0 > .w-100.justify-content-center > .d-flex > :nth-child(2)').click();
 
     // preenche o campo de materiais
-    cy.preencherFormulario();
+    cy.cadastraMaterial();
 
     //fecha botao de editar material
     cy.get(':nth-child(2) > .rt-tr > [style="justify-content: center; flex: 35 0 auto; width: 35px;"] > .d-flex > .action-buttons > :nth-child(1) > .btn')
@@ -250,7 +251,7 @@ it('Pré-Análise(administrativo)', () => {
     });
 })
 
-it('Análise Ténica analista', () => {
+it.only('Análise Ténica analista', () => {
 
     cy.visit('https://dev.analyticare.com.br/authentication/login')
     //login
@@ -264,7 +265,7 @@ it('Análise Ténica analista', () => {
 
     //seleciona o ultimo protocolo cadastrado
     const protocoloFinal = Cypress.env('protocoloFinal');
-    cy.get('.rt-tbody').contains(protocoloFinal).click();
+    cy.get('.rt-tbody').contains('202305AC00309').click();
 
     cy.get('.breadcrumb-body').then($breadcrumb => {
         if ($breadcrumb.text().includes('Iniciar Análise Técnica')) {
@@ -272,26 +273,36 @@ it('Análise Ténica analista', () => {
                 .click()
         }
     })
+
+    cy.get('.m-0 > :nth-child(3)')
+        .contains('Pedido Médico/Odontológico')
+        .click()
+
+    //escreve pedido medico
+    cy.get('.editorClassName')
+        .type(faker.lorem.lines())
+
+
+    //salva
+    cy.get('.medical-request-main-wrapper > .btn')
+        .click()
+
     //clica em Análise Técnica
     cy.get('.m-0 > :nth-child(4)')
         .contains('Análise Técnica')
         .click()
 
-    cy.get('.active > :nth-child(1) > :nth-child(3) > .btn')
-        .click()
-
-    cy.get('.editorClassName')
-        .find('.public-DraftStyleDefault-block span')
-        .invoke('text', '123');
-
-    cy.wait(3000)
     //analisa os materiais
-    cy.Analisa_materiais()
+    cy.analistaMatareial1()
+    cy.analistaMatareial2()
+    cy.analistaMatareial3()
 
-    cy.get('.breadcrumb-body').then($breadcrumb => {
-        if ($breadcrumb.text().includes('Enviar para Revisão')) {
-            cy.get('.mr-5 > .d-flex > .btn-primary')
-                .click()
-        }
-    })
+    cy.get('.mr-5 > .d-flex > .btn-primary').contains('Enviar para Revisão').click()
+
+    // cy.get('.breadcrumb-body').then($breadcrumb => {
+    //     if ($breadcrumb.text().includes('Enviar para Revisão')) {
+    //         cy.get('.mr-5 > .d-flex > .btn-primary')
+    //             .click()
+    //     }
+    // })
 })
