@@ -43,7 +43,7 @@ it('Cadastrar protocolo - analistateste', () => {
     })
 
     //seleciona análise de código e negociação e valida se apareceu as opções de faturamento
-    cy.get(':nth-child(1) > .input-checkbox-box')
+    cy.get(':nth-child(1) > .input-checkbox-box').click();
     cy.get(':nth-child(2) > .input-checkbox-box').click();
     cy.get('.pt-5 > :nth-child(6)').contains('Direto')
     cy.get('.pt-5 > :nth-child(6)').contains('Prestador')
@@ -160,6 +160,8 @@ it('Cadastrar protocolo - analistateste', () => {
         });
     cy.end()
 });
+
+
 it('Pré-Análise(administrativo)', () => {
     cy.visit('https://dev.analyticare.com.br/authentication/login')
     //login
@@ -230,6 +232,26 @@ it('Pré-Análise(administrativo)', () => {
     cy.get('.m-0 > :nth-child(3) > .color-link')
         .click()
 
+    //selecionar doctor
+    cy.get('.medical-request-main-wrapper > .justify-content-end > .btn').click()
+
+    cy.get(':nth-child(5) > :nth-child(1) > .input-checkbox-box').click()
+
+    //verifica se ficou visivel as info do medico
+    cy.get('.doctor-care-geral-info-panel').should('be.visible')
+
+    //verifica se o medico eh o correto
+    cy.get(':nth-child(1) > .doctor-care-geral-info-wrapper > .doctor-care-geral-info-description')
+        .contains('Medico desempatador teste')
+
+    //mensagem para doctor
+    cy.get('#doctorCareMessage').type(`Enviado para doctor automáticamente`)
+
+    cy.wait(1500)
+    //solicita parecer doctor
+    cy.get('.modal-content > .justify-content-end > .btn').click()
+
+    cy.wait(500)
     // envia para Analise Tecnica
     cy.get('.breadcrumb-body').then($breadcrumb => {
         const $button = $breadcrumb.find('.mr-5 > .d-flex > .btn-primary');
@@ -251,7 +273,40 @@ it('Pré-Análise(administrativo)', () => {
     });
 })
 
-it.only('Análise Ténica analista', () => {
+
+it('doctorCare', () => {
+    cy.visit('https://dev.analyticare.com.br/authentication/login')
+    //login
+    cy.get(':nth-child(1) > .mb-3 > .form-control').type(Cypress.env('doctor'));
+    cy.get(':nth-child(2) > .mb-3 > .form-control').type(Cypress.env('password'));
+    cy.get('.button-login > .btn').click();
+    cy.url({ timeout: 40000 }).should('include', '/protocolos/listar');
+    cy.wait(1500)
+
+    // clica no protocolo    
+    const protocoloFinal = Cypress.env('protocoloFinal');
+    // usa o valor para fazer alguma coisa, como clicar em um elemento que contém esse texto
+    cy.get('.rt-tbody').contains(protocoloFinal).click();
+    cy.wait(1500)
+
+    //verifica se está sem acesso antes de assumir
+    cy.get('.breadcrumb-body').then($breadcrumb => {
+        if ($breadcrumb.text().includes('Iniciar ')) {
+            cy.contains('Iniciar Análise').click()
+        }
+    })
+    cy.validaProcedimentos()
+    cy.wait(2000)
+    //envia parecer
+    cy.get('.d-flex.mr-5 > .d-flex > .btn-primary').click()
+
+    cy.get('.swal2-popup').should('be.visible')
+    cy.get('.swal2-confirm').click()
+    cy.get('.page-content')
+})
+
+
+it('Análise Ténica analista', () => {
 
     cy.visit('https://dev.analyticare.com.br/authentication/login')
     //login
@@ -265,7 +320,7 @@ it.only('Análise Ténica analista', () => {
 
     //seleciona o ultimo protocolo cadastrado
     const protocoloFinal = Cypress.env('protocoloFinal');
-    cy.get('.rt-tbody').contains('202305AC00309').click();
+    cy.get('.rt-tbody').contains(protocoloFinal).click();
 
     cy.get('.breadcrumb-body').then($breadcrumb => {
         if ($breadcrumb.text().includes('Iniciar Análise Técnica')) {
@@ -280,7 +335,7 @@ it.only('Análise Ténica analista', () => {
 
     //escreve pedido medico
     cy.get('.editorClassName')
-        .type(faker.lorem.lines())
+        .type(faker.lorem.sentences(2, '\n'))
 
 
     //salva
@@ -297,12 +352,28 @@ it.only('Análise Ténica analista', () => {
     cy.analistaMatareial2()
     cy.analistaMatareial3()
 
-    cy.get('.mr-5 > .d-flex > .btn-primary').contains('Enviar para Revisão').click()
+    //valida se a barra está 100%
+    cy.get('.materials-progress-bar').contains('100%')
 
-    // cy.get('.breadcrumb-body').then($breadcrumb => {
-    //     if ($breadcrumb.text().includes('Enviar para Revisão')) {
-    //         cy.get('.mr-5 > .d-flex > .btn-primary')
-    //             .click()
-    //     }
-    // })
+    //envia para REVISAO
+    cy.get('.mr-5 > .d-flex > .btn-primary').contains('Enviar para Revisão').click()
+    cy.end()
+})
+
+
+it('Revisão - supervisor', () => {
+    cy.visit('https://dev.analyticare.com.br/authentication/login')
+    //login
+    cy.get(':nth-child(1) > .mb-3 > .form-control').type(Cypress.env('supervisor'));
+    cy.get(':nth-child(2) > .mb-3 > .form-control').type(Cypress.env('password'));
+    cy.get('.button-login > .btn').click();
+    //esperar a pagina carregar
+    cy.url({ timeout: 10000 }).should('include', '/protocolos/listar');
+
+    cy.wait(1500)
+    cy.get('.rt-tbody').scrollIntoView();
+
+    //seleciona o ultimo protocolo cadastrado
+    const protocoloFinal = Cypress.env('protocoloFinal');
+    cy.get('.rt-tbody').contains(protocoloFinal).click();
 })

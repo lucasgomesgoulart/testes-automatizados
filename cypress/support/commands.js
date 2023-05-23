@@ -39,16 +39,30 @@ Cypress.Commands.add('cadastraBenef', () => {
 
 })
 
+
+
 Cypress.Commands.add('cadastraMaterial', () => {
+
+    // Cria um array vazio para guardar os nomes dos produtos
+    let produtos = [];
+    // Cria uma função para gerar um nome de produto único
+    function gerarProdutoUnico() {
+        // Gera um nome de produto aleatório usando o faker.js
+        let produto = faker.commerce.product();
+        // Verifica se o produto já está no array de produtos e retorna ele ou gera outro
+        return produtos.includes(produto) ? gerarProdutoUnico() : produtos.push(produto) && produto;
+    }
+
     cy.wrap(Array(3).fill(null)).each(() => {
         cy.get(':nth-child(1) > .col-md-4 > .form-control-input > .form-control').type(faker.finance.creditCardNumber())
-        cy.wait(500)
-        cy.get('.col-md-6 > .form-control-input > .form-control').type(faker.commerce.product())
-        cy.wait(500)
-        cy.get('.mt-4.align-items-start > :nth-child(3) > .form-control-input > .form-control').type('1500',);
-        cy.wait(500)
+        cy.wait(1000)
+        // Usa a função para gerar um nome de produto único
+        cy.get('.col-md-6 > .form-control-input > .form-control').type(gerarProdutoUnico())
+        cy.wait(1000)
+        cy.get('.mt-4.align-items-start > :nth-child(3) > .form-control-input > .form-control').type('11000',);
+        cy.wait(1000)
         cy.get('#add-material').click()
-        cy.wait(500)
+        cy.wait(1000)
     });
 });
 
@@ -66,7 +80,6 @@ Cypress.Commands.add('EditaEValidaBenef', () => {
 
     cy.get(':nth-child(2) > .service-guide-title > :nth-child(2) > svg > path')
         .click();
-
     cy.get('#carteiraNumber').clear().type(beneficiaryData.carteiraNumber);
     cy.get('#validityCard').clear().type(beneficiaryData.validityCard);
     cy.get('.d-flex.w-100 > :nth-child(2) > .service-guide-wrapper-grid-5-col > :nth-child(3) > .form-control-input > .form-control')
@@ -233,11 +246,10 @@ Cypress.Commands.add('analistaMatareial1', () => {
         .click()
     // valor unitarioF
     cy.get('.py-5 > :nth-child(2) > .form-control-input > .form-control')
-        .clear()
+
         .type('299')
     //informacoes complementares
     cy.get('.mt-4 > div > .form-control')
-        .clear()
         .type(`alteração automática, ${getHora()}`, { delay: 50 })
     //salva
     cy.get('.mb-4 > .col-lg-2 > .btn')
@@ -298,4 +310,63 @@ Cypress.Commands.add('analistaMatareial3', () => {
     //salva
     cy.get('.mb-4 > .col-lg-2 > .btn').click()
 
+})
+
+Cypress.Commands.add('validaProcedimentos', () => {
+    cy.get(':nth-child(1) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+    cy.wait(500)
+    cy.get(':nth-child(1) > .container > form > .decisions-container > :nth-child(1) > .input-radio-box').click()
+    cy.get('.pl-0 > .form-control-input > .form-control').type(faker.lorem.sentences(2, '\n'))
+    cy.get('.col-lg-2 > .btn').click()
+    cy.get(':nth-child(1) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+
+
+    cy.get(':nth-child(2) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+    cy.wait(500)
+    cy.get(':nth-child(2) > .container > form > .decisions-container > :nth-child(1) > .input-radio-box').click()
+    cy.get('.pl-0 > .form-control-input > .form-control').type(faker.lorem.sentences(2, '\n'))
+    cy.get('.col-lg-2 > .btn').click()
+    cy.get(':nth-child(2) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+
+    cy.get(':nth-child(3) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+    cy.wait(500)
+    cy.get(':nth-child(3) > .container > form > .decisions-container > :nth-child(1) > .input-radio-box').click()
+    cy.get('.pl-0 > .form-control-input > .form-control').type(faker.lorem.sentences(2, '\n'))
+    cy.get('.col-lg-2 > .btn').click()
+    cy.get(':nth-child(3) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+
+    cy.get(':nth-child(4) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+    cy.wait(500)
+    cy.get(':nth-child(4) > .container > form > .decisions-container > :nth-child(1) > .input-radio-box').click()
+    cy.get('.pl-0 > .form-control-input > .form-control').type(faker.lorem.sentences(2, '\n'))
+    cy.get('.col-lg-2 > .btn').click()
+    cy.get(':nth-child(4) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+
+    cy.get(':nth-child(5) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+    cy.wait(500)
+    cy.get(':nth-child(5) > .container > form > .decisions-container > :nth-child(1) > .input-radio-box').click()
+    cy.get('.pl-0 > .form-control-input > .form-control').type(faker.lorem.sentences(2, '\n'))
+    cy.get('.col-lg-2 > .btn').click()
+    cy.get(':nth-child(5) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+
+    cy.get(':nth-child(6) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+    cy.wait(500)
+    cy.get(':nth-child(6) > .container > form > .decisions-container > :nth-child(1) > .input-radio-box').click()
+    cy.get('.pl-0 > .form-control-input > .form-control').type(faker.lorem.sentences(2, '\n'))
+    cy.get('.col-lg-2 > .btn').click()
+    cy.get(':nth-child(6) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+
+    cy.get(':nth-child(7) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+    cy.wait(500)
+    cy.get(':nth-child(7) > .container > form > .decisions-container > :nth-child(1) > .input-radio-box').click()
+    cy.get('.pl-0 > .form-control-input > .form-control').type(faker.lorem.sentences(2, '\n'))
+    cy.get('.col-lg-2 > .btn').click()
+    cy.get(':nth-child(7) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+
+    cy.get(':nth-child(8) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+    cy.wait(500)
+    cy.get(':nth-child(8) > .container > form > .decisions-container > :nth-child(1) > .input-radio-box').click()
+    cy.get('.pl-0 > .form-control-input > .form-control').type(faker.lorem.sentences(2, '\n'))
+    cy.get('.col-lg-2 > .btn').click()
+    cy.get(':nth-child(8) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
 })
