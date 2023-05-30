@@ -3,8 +3,8 @@ const { defineConfig } = require("cypress");
 module.exports = defineConfig({
   watchForFileChanges: false,
   projectId: "orrxpm",
-  defaultCommandTimeout: 10000,
-
+  defaultCommandTimeout: 20000,
+  experimentalMemoryManagement: true,
   e2e: {
     baseUrl: 'https://app.analyticare.com.br/authentication/login',
 

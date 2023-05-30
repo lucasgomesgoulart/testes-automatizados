@@ -2,6 +2,14 @@ import { faker } from "@faker-js/faker"
 var fakerBr = require('faker-br');
 import '@shelex/cypress-allure-plugin';
 
+Cypress.Commands.add('login', (username, password) => {
+    cy.get(':nth-child(1) > .mb-3 > .form-control').type(username);
+    cy.get(':nth-child(2) > .mb-3 > .form-control').type(password);
+    cy.get('.button-login > .btn').click();
+    //esperar a pagina carregar
+    cy.url({ timeout: 10000 }).should('include', '/protocolos/listar');
+});
+
 Cypress.Commands.add('cadastraBenef', () => {
     //nome
     cy.get(':nth-child(3) > .card-body > :nth-child(3) > .col-md-4 > .form-control-input > .form-control')
@@ -38,8 +46,6 @@ Cypress.Commands.add('cadastraBenef', () => {
         .type(fakerBr.phone.phoneNumber())
 
 })
-
-
 
 Cypress.Commands.add('cadastraMaterial', () => {
 
