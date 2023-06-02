@@ -10,6 +10,15 @@ Cypress.Commands.add('login', (username, password) => {
     cy.url({ timeout: 10000 }).should('include', '/protocolos/listar');
 });
 
+Cypress.Commands.add('loginMed', (username, password) => {
+    cy.get('input[name="username_or_email"]').type(username);
+    cy.get('input[name="password"]').type(password);
+    cy.get('.button-login').find('button').click();
+    //esperar a pagina carregar
+    cy.wait(1500)
+    cy.url({ timeout: 10000 }).should('include', '/process/list');
+});
+
 Cypress.Commands.add('cadastraBenef', () => {
     //nome
     cy.get(':nth-child(3) > .card-body > :nth-child(3) > .col-md-4 > .form-control-input > .form-control')
@@ -64,11 +73,9 @@ Cypress.Commands.add('cadastraMaterial', () => {
         cy.wait(1000)
         // Usa a função para gerar um nome de produto único
         cy.get('.col-md-6 > .form-control-input > .form-control').type(gerarProdutoUnico())
-        cy.wait(1000)
         cy.get('.mt-4.align-items-start > :nth-child(3) > .form-control-input > .form-control').type('11000',);
-        cy.wait(1000)
+        cy.wait(500)
         cy.get('#add-material').click()
-        cy.wait(1000)
     });
 });
 
@@ -112,6 +119,7 @@ Cypress.Commands.add('EditaEValidaBenef', () => {
 
 
 Cypress.Commands.add('caracteristicas_alteracao_validacao', () => {
+    cy.get('.service-guide-wrapper-grid-6-col').scrollIntoView()
     ///valida se todos estão ali
     cy.get('.service-guide-wrapper-grid-6-col > :nth-child(1)').contains('SADT')
     cy.get('.service-guide-wrapper-grid-6-col > :nth-child(1)').contains('Internação')

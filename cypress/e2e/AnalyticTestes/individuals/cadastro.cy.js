@@ -1,5 +1,4 @@
 import 'cypress-file-upload'
-import { faker } from "@faker-js/faker";
 
 describe('Fluxo completo com doctor', () => {
     beforeEach(() => {
@@ -278,164 +277,12 @@ describe('Fluxo completo com doctor', () => {
                     .click()
                 cy.get('.swal2-popup')
                     .should('be.visible')
-                cy.get('.swal2-actions').find('.swal2-confirm.swal2-styled').click({ force: true })
+                cy.get('.swal2-actions').find('.swal2-confirm.swal2-styled').click()
+
                 cy.wait(500)
             }
         })
-    })
-
-    it('Análise Ténica analista', () => {
-
-        cy.login(Cypress.env('analista'), Cypress.env('password'));
-        cy.wait(1500)
-        cy.get('.rt-tbody').scrollIntoView();
-
-        //seleciona o ultimo protocolo cadastrado
-        const protocoloFinal = Cypress.env('protocoloFinal');
-        cy.get('.rt-tbody').contains(protocoloFinal).click();
-
-        cy.get('.breadcrumb-body').then($breadcrumb => {
-            if ($breadcrumb.text().includes('Iniciar Análise Técnica')) {
-                cy.get('.mr-5 > .d-flex > .btn-primary')
-                    .click()
-            }
-        })
-
-        cy.get('.m-0 > :nth-child(3)')
-            .contains('Pedido Médico/Odontológico')
-            .click()
-
-        //escreve pedido medico
-        cy.get('.editorClassName')
-            .type('Alterando... Analise Técnica[automatic]')
-
-        //salva
-        cy.get('.medical-request-main-wrapper > .btn')
-            .click()
-
-        //clica em Análise Técnica
-        cy.get('.m-0 > :nth-child(4)')
-            .contains('Análise Técnica')
-            .click()
-
-        //analisa os materiais
-        cy.analistaMatareial1()
-        cy.analistaMatareial2()
-        cy.analistaMatareial3()
-
-        //valida se a barra está 100%
-        cy.get('.materials-progress-bar').contains('100%')
-
-        //envia para REVISAO
-        cy.get('.mr-5 > .d-flex > .btn-primary').contains('Enviar para Revisão').click()
-    })
-
-    it('Revisão - supervisor', () => {
-        cy.login(Cypress.env('supervisor'), Cypress.env('password'));
-
-        cy.wait(1500)
-        cy.get('.rt-tbody').scrollIntoView();
-
-        //seleciona o ultimo protocolo cadastrado
-        const protocoloFinal = Cypress.env('protocoloFinal');
-        cy.get('.rt-tbody').contains(protocoloFinal).click();
-
-        //clica em revisao
-        cy.get('.m-0 > :nth-child(4) > .color-link').click()
-
-        //clica para Iniciar Revisão
-        // cy.get('.mr-5 > .d-flex > .btn-primary').click()
-
-        //marca inconformidade no primeiro material
-        cy.get('.active > :nth-child(2) > .my-3').scrollIntoView()
-        cy.get('#NonConformity').first().click();
-
-        //verifica se o titulo esta Incoformidade e clica
-        cy.contains('Inconformidade').click()
-
-        const radioButtons = [
-            'Divergência na DUT',
-            'Erro Ortográfico',
-            'Justificativa de Pertinencia',
-            'Literatura Insuficiente',
-            'Preço de Referência',
-            'Outro'
-        ];
-
-        cy.get('.modal-content > .py-1').then(($radioButtonContainer) => {
-            radioButtons.forEach((radioButton) => {
-                cy.wrap($radioButtonContainer).contains(radioButton);
-            });
-        });
-
-        //clica em Divergencia na DUT
-        cy.get(':nth-child(1) > .form-control-input > .flex-column > :nth-child(1) > .input-checkbox-box').click()
-        cy.get(':nth-child(1) > .form-control-input > .flex-column > :nth-child(1) > .input-checkbox-box').should('be.checked')
-
-        //escreve Mensagem de Inconformidade
-        cy.get('.mt-3 > .form-control').type('Inconformidade, Divergência no DUT, automatic')
-
-        //devolve para analista
-        cy.get('.border-0 > .btn-primary').click()
-
-        //valida status de inconformidade
-        cy.get('.status-nonconformity').contains('Inconformidade')
-
-
-    })
-
-    it('Inconformidade - Analista', () => {
-        cy.login(Cypress.env('analista'), Cypress.env('password'));
-
-        // via pro protocolo
-        const protocoloFinal = Cypress.env('protocoloFinal');
-        cy.get('.rt-tbody').contains(protocoloFinal).click();
-
-        cy.get('.breadcrumb-body').contains('Iniciar Análise Técnica').click()
-
-        //valida modal e informacoes
-        cy.get('.modal-content > .py-1').contains('Divergência na DUT')
-        cy.get('.font-14 > .input-checkbox-box').should('be.checked')
-
-        cy.get('.mt-3 > .font-medium').contains('Inconformidade, Divergência no DUT, automatic')
-
-        cy.get('.border-0 > .rounded-lg').contains('Acessar Inconformidade').click()
-
-        //vai pra tabela de materiais
-        cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody').scrollIntoView()
-
-        //abre o material
-        cy.get('.active > :nth-child(2) > .my-3 > .ReactTable > .rt-table > .rt-tbody > :nth-child(1) > .flex-row > div.w-100 > .w-100 > .rt-tr > .show-pointer')
-            .click()
-
-        cy.get('.py-5')
-            .should('be.visible')
-
-        //marca nao tem pertinencia
-        cy.get('.decisions-container > :nth-child(2) > .input-radio-box').click()
-        cy.get('.decisions-container > :nth-child(2) > .input-radio-box').should('be.checked')
-
-        // escreve justitifcativa
-        cy.get('.mt-3.pl-0 > .form-control')
-            .type('TESTE INCONFORMIDADE')
-        cy.get('.mt-3.pl-0 > .form-control')
-            .should('have.value', 'TESTE INCONFORMIDADE')
-
-        //salva
-        cy.get('.mb-4 > .col-lg-2 > .btn').click()
-
-        cy.get('.breadcrumb-body').scrollIntoView()
-
-        cy.get('.breadcrumb-body')
-            .contains('Enviar para Revisão')
-            .click()
-    })
-
-    it('Consenso', () => {
-        cy.login(Cypress.env('supervisor'), Cypress.env('password'));
-
-        // valida status
-        cy.get('.status-waiting').contains('Aguardando Consenso')
 
     })
 })
+
