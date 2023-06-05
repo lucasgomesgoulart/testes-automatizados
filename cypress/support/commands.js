@@ -2,7 +2,18 @@ import { faker } from "@faker-js/faker"
 var fakerBr = require('faker-br');
 import '@shelex/cypress-allure-plugin';
 
+
 Cypress.Commands.add('login', (username, password) => {
+
+
+
+
+
+
+
+
+
+
     cy.get(':nth-child(1) > .mb-3 > .form-control').type(username);
     cy.get(':nth-child(2) > .mb-3 > .form-control').type(password);
     cy.get('.button-login > .btn').click();
@@ -10,14 +21,9 @@ Cypress.Commands.add('login', (username, password) => {
     cy.url({ timeout: 10000 }).should('include', '/protocolos/listar');
 });
 
-Cypress.Commands.add('loginMed', (username, password) => {
-    cy.get('input[name="username_or_email"]').type(username);
-    cy.get('input[name="password"]').type(password);
-    cy.get('.button-login').find('button').click();
-    //esperar a pagina carregar
-    cy.wait(1500)
-    cy.url({ timeout: 10000 }).should('include', '/process/list');
-});
+
+///// ///  ANALYTIC / / / / / // / // 
+
 
 Cypress.Commands.add('cadastraBenef', () => {
     //nome
@@ -383,4 +389,13 @@ Cypress.Commands.add('validaProcedimentos', () => {
     cy.get('.pl-0 > .form-control-input > .form-control').type(faker.lorem.sentences(2, '\n'))
     cy.get('.col-lg-2 > .btn').click()
     cy.get(':nth-child(8) > .flex-row > .d-flex.w-100 > .rt-tr > .show-pointer').click()
+})
+
+Cypress.Commands.add('validaProcedimentos', () => {
+
+    cy.get(':nth-child(4) > .tab-pane > .p-4 > .card-body > :nth-child(1) > :nth-child(1)')
+        .contains('Cadastro de Materiais')
+
+    cy.get('.card-body > :nth-child(1) > [style="pointer-events: auto; opacity: 1;"] > :nth-child(2) > .col-md-3 > .form-control')
+        .type(faker.creditCardNumber())
 })
