@@ -65,5 +65,51 @@ describe('OperadoraTeste - Cadastro', () => {
 
         //concluir
         cy.get('.p-3 > :nth-child(1) > .mt-4 > :nth-child(2) > .btn').click()
+
+        cy.get(':nth-child(1) > .rt-tr > [style="flex: 120 0 auto; width: 120px; max-width: 120px;"] > .text-info > u')
+            .invoke('text')
+            .then((text) => {
+                const protocolo = text
+                Cypress.env('protocolo', protocolo)
+                console.log(protocolo)
+            });
+    })
+
+    it.only('administrativo', () => {
+        cy.loginMed(Cypress.env('administrativoProducao'), Cypress.env('password'))
+        const dados = Cypress.env('dados'); // recupera os dados da variável global do Cypress
+        const protocolo = Cypress.env('protocolo'); // recupera os dados do protocolo
+
+        //entra no protocolo
+        cy.get('.card-body').contains('202306AD0042').click()
+        cy.window().then((win) => {
+            const token = 'Bearer ' + win.sessionStorage.getItem('token'); // Adicione 'Bearer ' ao token
+          
+            cy.request({
+              method: 'GET',
+              url: 'https://hml.api.advicemed.com.br/api/operadora-prestador-hospitais/',
+              qs: {
+                pes_id_operadora: 1
+              },
+              headers: {
+                Authorization: token // Use o token corretamente formatado
+              }
+            }).as('request');
+          });
+          
+
+        // Faça as ações que dependem da resposta da requisição
+
+        // Aguarde até que as ações sejam concluídas
+        cy.wait('@request');
+
+
+
+        // assumir
+        cy.get('.d-flex > :nth-child(3) > .btn').contains('Assumir').click()
+
+        cy.get('.modal-footer > .btn-primary').click()
+        cy.validaCampos()
+
     })
 })
