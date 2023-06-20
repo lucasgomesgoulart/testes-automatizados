@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "cypress-wait-until": "^1.7.2",
+    "date-fns": "^2.30.0",
     "dayjs": "^1.11.7",
     "faker-br": "^0.4.1",
     "moment": "^2.29.4"

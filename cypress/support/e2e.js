@@ -16,7 +16,7 @@
 // Import commands.js using ES2015 syntax:
 import './commands'
 import './cadastroAdviceMedCmd.js'
-import './administrativoAdviceMedCmd.js'
+import './analyticAnalistaTeste.js'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

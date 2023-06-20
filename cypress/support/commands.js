@@ -2,18 +2,7 @@ import { faker } from "@faker-js/faker"
 var fakerBr = require('faker-br');
 import '@shelex/cypress-allure-plugin';
 
-
 Cypress.Commands.add('login', (username, password) => {
-
-
-
-
-
-
-
-
-
-
     cy.get(':nth-child(1) > .mb-3 > .form-control').type(username);
     cy.get(':nth-child(2) > .mb-3 > .form-control').type(password);
     cy.get('.button-login > .btn').click();

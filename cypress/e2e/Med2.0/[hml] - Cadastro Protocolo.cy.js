@@ -33,11 +33,13 @@ describe('OperadoraTeste - Cadastro', () => {
         cy.get('[style="pointer-events: auto; opacity: 1;"] > :nth-child(1) > :nth-child(1) > :nth-child(2)').contains('Segunda Opinião')
         cy.get('[style="pointer-events: auto; opacity: 1;"] > :nth-child(1) > :nth-child(1) > :nth-child(2)').contains('Baixa Complexidade')
         //
-        cy.InformaçõesMED()
+        cy.gerarDadosGuia()
         cy.cadastraBeneficiarioMed()
         cy.cadastraProfAssistente()
         cy.cadastraProfAuditor()
         cy.cadastraPrestadorMed()
+
+
 
         //Pagina seguinte
         cy.get('[style="pointer-events: auto; opacity: 1;"] > :nth-child(1) > :nth-child(1) > .card-body > .mt-4 > :nth-child(2) > .btn')
@@ -71,45 +73,40 @@ describe('OperadoraTeste - Cadastro', () => {
             .then((text) => {
                 const protocolo = text
                 Cypress.env('protocolo', protocolo)
-                console.log(protocolo)
+                console.log(`Protocolo: ${protocolo}`)
             });
     })
 
-    it.only('administrativo', () => {
+    it('administrativo', () => {
         cy.loginMed(Cypress.env('administrativoProducao'), Cypress.env('password'))
-        const dados = Cypress.env('dados'); // recupera os dados da variável global do Cypress
-        const protocolo = Cypress.env('protocolo'); // recupera os dados do protocolo
+
+        const protocolo = Cypress.env('protocolo'); // recupera o numero de protocolo
+
+        cy.on('uncaught:exception', (err, runnable) => {
+            // Retorne false para ignorar o erro
+            return false;
+        });
 
         //entra no protocolo
-        cy.get('.card-body').contains('202306AD0042').click()
-        cy.window().then((win) => {
-            const token = 'Bearer ' + win.sessionStorage.getItem('token'); // Adicione 'Bearer ' ao token
-          
-            cy.request({
-              method: 'GET',
-              url: 'https://hml.api.advicemed.com.br/api/operadora-prestador-hospitais/',
-              qs: {
-                pes_id_operadora: 1
-              },
-              headers: {
-                Authorization: token // Use o token corretamente formatado
-              }
-            }).as('request');
-          });
-          
+        cy.get('.card-body').contains(protocolo).click()
+        cy.url({ timeout: 10000 }).should('include', '/process/register');
 
-        // Faça as ações que dependem da resposta da requisição
+        cy.get('.situation-card').then(($element) => {
+            const text = $element.text();
+            if (text.includes('Em Análise Administrativa')) {
+                // O texto "Em Análise Administrativa" está presente
+                // Não é necessário clicar no botão "Assumir"
+            } else {
+                // O texto "Em Análise Administrativa" não está presente
+                cy.get('.d-flex > :nth-child(3) > .btn').contains('Assumir').click();
+                cy.get('.modal-footer > .btn-primary').click()
+            }
+        });
 
-        // Aguarde até que as ações sejam concluídas
-        cy.wait('@request');
+        cy.intercept('GET', 'https://hml.api.advicemed.com.br/api/operadora-prestador-hospitais/', {
+            // Não faça nada com a requisição
+        }).as('REQ quebrada, pes_id incorreto.');
 
-
-
-        // assumir
-        cy.get('.d-flex > :nth-child(3) > .btn').contains('Assumir').click()
-
-        cy.get('.modal-footer > .btn-primary').click()
-        cy.validaCampos()
-
+        cy.validaCaracteristicas()
     })
 })

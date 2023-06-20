@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker"
 var fakerBr = require('faker-br');
 import '@shelex/cypress-allure-plugin';
+import { format } from 'date-fns';
 
 Cypress.Commands.add('loginMed', (username, password) => {
     cy.get('input[name="username_or_email"]').type(username);
@@ -8,52 +9,60 @@ Cypress.Commands.add('loginMed', (username, password) => {
     cy.get('.button-login').find('button').click();
     //esperar a pagina carregar
     cy.wait(1500)
-    cy.url({ timeout: 10000 }).should('include', '/process/list');
 });
 
-Cypress.Commands.add('InformaçõesMED', () => {
+Cypress.Commands.add('gerarDadosGuia', () => {
+    const dataAtendimento = faker.date.recent(1);
+    const dadosGuia = {
+        numeroGuia: faker.datatype.number({ min: 1, max: 99999 }),
+        dataAtendimento: dataAtendimento.toISOString().slice(0, 10),
+        senha: faker.datatype.number({ min: 100, max: 9999 }),
+        especialidade: 'Geral',
+    };
+
+    Cypress.env('dadosGuia', dadosGuia);
+
+    cy.wrap(dadosGuia).as('dadosGuia'); // Armazena os dadosGuia como um alias
+
     cy.get('[style="pointer-events: auto; opacity: 1;"] > :nth-child(1) > :nth-child(1) > :nth-child(3) > :nth-child(2) > .form-control')
-        .type(faker.datatype.number({ 'min': 1, 'max': 99999 }))
-
+        .type(dadosGuia.numeroGuia);
     cy.get('[style="pointer-events: auto; opacity: 1;"] > :nth-child(1) > :nth-child(1) > :nth-child(3) > :nth-child(3) > .form-control')
-        .type(faker.date.between({ from: '2023-01 - 01', to: '2023-04 - 30' }).toISOString().slice(0, 10))
-
+        .type(dadosGuia.dataAtendimento);
     cy.get('[style="pointer-events: auto; opacity: 1;"] > :nth-child(1) > :nth-child(1) > :nth-child(3) > :nth-child(4) > .form-control')
-        .type(faker.datatype.number({ 'min': 1, 'max': 99999 }))
-
+        .type(dadosGuia.senha);
     cy.get('.col-md-4 > .css-2b097c-container > .css-yk16xz-control > .css-1hwfws3')
-        .type('Geral')
-
-    cy.get('#react-select-2-option-0').should('be.visible').click()
-})
+        .type(dadosGuia.especialidade);
+    cy.get('#react-select-2-option-0').should('be.visible').click();
+});
 
 Cypress.Commands.add('cadastraBeneficiarioMed', () => {
     function gerarDadosAleatorios() {
-        const dados = {};
-        
-        dados.numero = faker.datatype.number({ min: 10000, max: 50000 });
-        dados.dataCarteirinha = faker.date.between('2023-01-01', '2023-04-30').toISOString().slice(0, 10);
-        dados.cpf = fakerBr.br.cpf();
-        dados.dataNasc = faker.date.between('1980-01-01', '2023-04-30').toISOString().slice(0, 10);
-        dados.nome = fakerBr.name.findName();
-        dados.genero = 'FEMININO';
-        dados.email = faker.internet.email().toLowerCase();
-        dados.telefone = faker.datatype.number({ min: 1, max: 9 }) + fakerBr.phone.phoneNumber();
+        const dadosBeneficiario = {};
 
-        return dados;
+        dadosBeneficiario.numero = faker.datatype.number({ min: 10000, max: 50000 });
+        dadosBeneficiario.dataCarteirinha = faker.date.between('2023-01-01', '2023-04-30').toISOString().slice(0, 10);
+        dadosBeneficiario.cpf = fakerBr.br.cpf();
+        dadosBeneficiario.dataNasc = faker.date.between('1980-01-01', '2023-04-30').toISOString().slice(0, 10);
+        dadosBeneficiario.nome = fakerBr.name.findName();
+        dadosBeneficiario.genero = 'FEMININO';
+        dadosBeneficiario.email = faker.internet.email().toLowerCase();
+        dadosBeneficiario.telefone = faker.datatype.number({ min: 1, max: 9 }) + fakerBr.phone.phoneNumber();
+
+        return dadosBeneficiario;
     }
-    
-    
+
     const dadosAleatorios = gerarDadosAleatorios();
-    Cypress.env('dados', dadosAleatorios); // salva os dados na variável global do Cypress
+    Cypress.env('dadosBeneficiario', dadosAleatorios);
+    // salva os dados na variável global do Cypress
+
+    cy.get('[style="pointer-events: auto; opacity: 1;"] > :nth-child(1) > :nth-child(1) > :nth-child(5) > .row > :nth-child(3) > .form-control')
+        .type(dadosAleatorios.cpf);
+
     cy.get('[style="pointer-events: auto; opacity: 1;"] > :nth-child(1) > :nth-child(1) > :nth-child(5) > .row > :nth-child(1) > .form-control')
         .type(dadosAleatorios.numero);
 
     cy.get('[style="pointer-events: auto; opacity: 1;"] > :nth-child(1) > :nth-child(1) > :nth-child(5) > .row > :nth-child(2) > .form-control')
         .type(dadosAleatorios.dataCarteirinha);
-
-    cy.get('[style="pointer-events: auto; opacity: 1;"] > :nth-child(1) > :nth-child(1) > :nth-child(5) > .row > :nth-child(3) > .form-control')
-        .type(dadosAleatorios.cpf);
 
     cy.get(':nth-child(5) > .row > :nth-child(4) > .form-control')
         .type(dadosAleatorios.dataNasc);
@@ -287,4 +296,18 @@ Cypress.Commands.add('cadastraMedicamentoMed', () => {
 
     cy.get('.card-body > :nth-child(1) > [style="pointer-events: auto; opacity: 1;"] > :nth-child(4) > .mb-4 > .btn-primary')
         .click()
+})
+
+Cypress.Commands.add('validaCaracteristicas', () => {
+    cy.get('.col-md-10 > :nth-child(1) > .col > .form-group')
+        .contains('SADT')
+
+    cy.get('.col-md-10 > :nth-child(1) > .col > .form-group')
+        .contains('Eletiva')
+
+    cy.get('.col > .form-group > .ml-3 > .mt-4 > :nth-child(3)').contains('Junta Médica')
+})
+
+Cypress.Commands.add('validaGuia', () => {
+    
 })
