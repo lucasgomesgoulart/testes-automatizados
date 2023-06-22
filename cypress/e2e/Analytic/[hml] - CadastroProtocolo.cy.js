@@ -24,13 +24,17 @@ describe('Cadastro protocolo fluxo completo', () => {
         cy.InformacoesGuia()
         cy.Beneficiario()
         cy.ProfissionalAssistente()
-        // cy.get('.switch-box-checked').click()
         cy.Prestador()
-        cy.recuperaDados()
-        cy.wait(2000)
-        // Clica em Cadastrar
-        cy.get('.col-md-12 > .w-100 > .d-flex > :nth-child(2)').contains('Cadastrar').click({ force: true })
 
-        // cy.EnviarAnexo()
+        // Clica em Cadastrar
+        cy.get('.col-md-12 > .w-100 > .d-flex > :nth-child(2)').contains('Cadastrar').click()
+
+        Array.from({ length: 7 }).forEach(() => {
+            cy.EnviarAnexo()
+        })
+
+        //Proxima página
+        cy.get('.active > .pt-0 > .justify-content-center > .d-flex > :nth-child(2)').click()
+        cy.recuperaDados()
     });
 });

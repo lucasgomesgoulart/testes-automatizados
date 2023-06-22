@@ -12,6 +12,7 @@ let dadosPrestador;
 let dadosInformacoesGuia;
 let dadosBeneficiario;
 let dadosProfAssistente;
+let dadosAnexo
 
 Cypress.Commands.add('loginAnalyticHML', (username, password) => {
     cy.get('input[name="username_or_email"]').type(username);
@@ -148,7 +149,9 @@ Cypress.Commands.add('ProfissionalAssistente', () => {
         return faker.lorem.paragraphs(4);
     }
 
-    cy.get('.textarea-input').invoke('val', geraTexto());
+    const textoMedico = faker.lorem.paragraphs(4)
+
+    cy.get('.textarea-input').type(textoMedico)
 
     dadosProfAssistente = profAssistente;
 });
@@ -194,22 +197,29 @@ Cypress.Commands.add('Prestador', () => {
     dadosPrestador = prestador;
 });
 
-Cypress.Commands.add('recuperaDados', () => {
-    console.log(JSON.stringify(dadosBeneficiario))
-    console.log(JSON.stringify(dadosInformacoesGuia))
-    console.log(JSON.stringify(dadosProfAssistente))
-});
 
 Cypress.Commands.add('EnviarAnexo', () => {
+    let dadosAnexo = {}
     //Anexa o arquivo
     cy.get('.custom-file-label').selectFile('cypress/fixtures/teste.pdf');
 
     // Seleciona o tipo do anexo
-    cy.get(':nth-child(2) > .d-flex > .form-control').select('Exame')
+    const tiposAnexos = ['Outros', 'Exame', 'Orçamento', 'Pedido do Procedimento', 'Relatório do Profissional Assistente', 'Ata do processo']
+    const indiceAleatorio = Math.floor(Math.random() * tiposAnexos.length);
+    dadosAnexo.tipo = (tiposAnexos[indiceAleatorio]);
+    cy.get(':nth-child(2) > .d-flex > .form-control').select(tiposAnexos[indiceAleatorio])
+
 
     // Descrição
-    const sentencia = faker.lorem.sentence()
+    let sentencia = faker.lorem.sentence()
+    dadosAnexo.descricao = (sentencia)
     cy.get('.pt-0 > .gutter-x-14 > .false > .form-control').type(sentencia)
-
     cy.get('.w-50 > .btn').click()
 })
+
+Cypress.Commands.add('recuperaDados', () => {
+    console.log(JSON.stringify(dadosBeneficiario))
+    console.log(JSON.stringify(dadosInformacoesGuia))
+    console.log(JSON.stringify(dadosProfAssistente))
+    console.log(JSON.stringify(dadosAnexo))
+});
