@@ -1,7 +1,7 @@
 import 'cypress-file-upload';
 
 
-describe('Cadastro protocolo', () => {
+describe('Cadastro protocolo fluxo completo', () => {
     beforeEach(() => {
         cy.visit('https://hml.analyticare.com.br/authentication/login');
     });
@@ -24,6 +24,13 @@ describe('Cadastro protocolo', () => {
         cy.InformacoesGuia()
         cy.Beneficiario()
         cy.ProfissionalAssistente()
+        // cy.get('.switch-box-checked').click()
         cy.Prestador()
+        cy.recuperaDados()
+        cy.wait(2000)
+        // Clica em Cadastrar
+        cy.get('.col-md-12 > .w-100 > .d-flex > :nth-child(2)').contains('Cadastrar').click({ force: true })
+
+        // cy.EnviarAnexo()
     });
 });

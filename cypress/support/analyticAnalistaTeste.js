@@ -1,11 +1,17 @@
 import { faker } from "@faker-js/faker";
 var fakerBr = require('faker-br');
+import 'cypress-file-upload'
 
 function gerarDataAleatoria(dataInicial, dataFinal) {
     const dataAleatoria = faker.date.between(dataInicial, dataFinal);
     const dataFormatada = dataAleatoria.toISOString().split('T')[0];
     return dataFormatada;
 }
+
+let dadosPrestador;
+let dadosInformacoesGuia;
+let dadosBeneficiario;
+let dadosProfAssistente;
 
 Cypress.Commands.add('loginAnalyticHML', (username, password) => {
     cy.get('input[name="username_or_email"]').type(username);
@@ -34,15 +40,14 @@ Cypress.Commands.add('CaracterísticasProtocolo', () => {
 Cypress.Commands.add('InformacoesGuia', () => {
     function geraDadosGuia() {
         const dadosGuia = {};
-        dadosGuia.numero = faker.datatype.number({ min: 1000, max: 5000 })
-        cy.get('.card-body > :nth-child(2) > :nth-child(1) > .form-control-input > .form-control').type(dadosGuia.numero)
+        dadosGuia.numero = faker.datatype.number({ min: 1000, max: 5000 });
+        cy.get('.card-body > :nth-child(2) > :nth-child(1) > .form-control-input > .form-control').type(dadosGuia.numero);
 
-
-        dadosGuia.dataAtendimento = gerarDataAleatoria('2023-01-01', '2023-06-01')
+        dadosGuia.dataAtendimento = gerarDataAleatoria('2023-01-01', '2023-06-01');
         cy.get('.card-body > :nth-child(2) > :nth-child(2) > .form-control-input > .form-control').type(dadosGuia.dataAtendimento);
 
-        dadosGuia.senha = faker.datatype.number({ min: 999, max: 9999 })
-        cy.get('.card-body > :nth-child(2) > :nth-child(3) > .form-control-input > .form-control').type(dadosGuia.senha)
+        dadosGuia.senha = faker.datatype.number({ min: 999, max: 9999 });
+        cy.get('.card-body > :nth-child(2) > :nth-child(3) > .form-control-input > .form-control').type(dadosGuia.senha);
 
         function preencherEspecialidadeAleatoria() {
             const especialidades = [
@@ -50,18 +55,24 @@ Cypress.Commands.add('InformacoesGuia', () => {
                 'Bucomaxilo', 'Angiologia', 'Cardiologia', 'Cirurgia da mão',
                 'Cirurgia cardiovascular', 'Cirurgia torácica', 'Dermatologia',
                 'Cirurgia vascular'
-            ]
+            ];
 
             const indiceAleatorio = Math.floor(Math.random() * especialidades.length);
             dadosGuia.especialidade = especialidades[indiceAleatorio];
-            cy.get('.col-md-3 > .form-control-input > .align-items-center > .w-100 > .css-yk16xz-control > .css-1hwfws3 > .css-1wa3eu0-placeholder').type(dadosGuia.especialidade)
-            cy.get('#react-select-3-option-0').contains(dadosGuia.especialidade).click()
+            cy.get('.col-md-3 > .form-control-input > .align-items-center > .w-100 > .css-yk16xz-control > .css-1hwfws3 > .css-1wa3eu0-placeholder').type(dadosGuia.especialidade);
+            cy.get('#react-select-3-option-0').contains(dadosGuia.especialidade).click();
         }
         // Preenche uma especialidade aleatória pré definida
-        preencherEspecialidadeAleatoria()
+        preencherEspecialidadeAleatoria();
+
+        // Retorna os dados da guia
+        return dadosGuia;
     }
-    geraDadosGuia()
-})
+
+    // Gera os dados da guia e armazena na variável dadosInformacoesGuia
+    dadosInformacoesGuia = geraDadosGuia();
+});
+
 
 Cypress.Commands.add('Beneficiario', () => {
     const beneficiario = {}
@@ -85,13 +96,15 @@ Cypress.Commands.add('Beneficiario', () => {
     cy.get(':nth-child(3) > .card-body > :nth-child(4) > .col-md-2 > .form-control-input > .form-control').type(beneficiario.validadeCarteira)
 
     beneficiario.email = faker.internet.email()
-    cy.get(':nth-child(5) > .col-md-4 > .form-control-input > .form-control').type(beneficiario.email)
+    cy.get(':nth-child(3) > .card-body > :nth-child(5) > .col-md-4 > .form-control-input > .form-control').type(beneficiario.email)
 
     beneficiario.celular = faker.phone.phoneNumber('+91 ##########')
-    cy.get(':nth-child(5) > :nth-child(2) > .form-control-input > .form-control').type(beneficiario.celular)
+    cy.get(':nth-child(3) > .card-body > :nth-child(5) > :nth-child(2) > .form-control-input > .form-control').type(beneficiario.celular)
 
     beneficiario.telefone = faker.phone.phoneNumber('+91 ##########')
-    cy.get(':nth-child(5) > :nth-child(3) > .form-control-input > .form-control').type(beneficiario.telefone)
+    cy.get(':nth-child(3) > .card-body > :nth-child(5) > :nth-child(3) > .form-control-input > .form-control').type(beneficiario.telefone)
+
+    dadosBeneficiario = beneficiario;
 })
 
 Cypress.Commands.add('ProfissionalAssistente', () => {
@@ -134,22 +147,25 @@ Cypress.Commands.add('ProfissionalAssistente', () => {
     const geraTexto = () => {
         return faker.lorem.paragraphs(4);
     }
-    profAssistente.descricaoSolicitacao =
-        cy.get('.textarea-input').type(geraTexto())
+
+    cy.get('.textarea-input').invoke('val', geraTexto());
+
+    dadosProfAssistente = profAssistente;
 });
 
-Cypress.Commands.add('Prestador', () => {
-    const prestador = {
-        cnpj: fakerBr.br.cnpj()
-    };
-    cy.get('.collapse > :nth-child(3) > :nth-child(1) > .form-control-input > .form-control')
-        .invoke('val', prestador.cnpj);
 
-    prestador.nome = faker.company.name()
-    cy.get('.collapse > :nth-child(3) > :nth-child(2) > .form-control-input > .form-control').type(prestador.nome)
+Cypress.Commands.add('Prestador', () => {
+    const prestador = {}
+    prestador.cnpj = fakerBr.br.cnpj()
+
+    cy.get(':nth-child(5) > .card-body > :nth-child(5) > :nth-child(1) > .form-control-input > .form-control')
+        .type(prestador.cnpj);
+
+    prestador.razaoSocial = faker.company.name()
+    cy.get(':nth-child(5) > .card-body > :nth-child(5) > :nth-child(2) > .form-control-input > .form-control').type(prestador.razaoSocial)
 
     prestador.nomeFantasia = faker.company.name()
-    cy.get('.collapse > :nth-child(3) > :nth-child(3) > .form-control-input > .form-control').type(prestador.nomeFantasia)
+    cy.get(':nth-child(5) > .card-body > :nth-child(5) > :nth-child(3) > .form-control-input > .form-control').type(prestador.nomeFantasia)
 
     const selecionaEstadoAleatorio = () => {
         const estadosBrasileiros = [
@@ -162,19 +178,38 @@ Cypress.Commands.add('Prestador', () => {
         const estadoSelecionado = estadosBrasileiros[indiceAleatorio];
         return estadoSelecionado;
     };
-    selecionaEstadoAleatorio();
+
     prestador.estado = selecionaEstadoAleatorio();
+    cy.wait(1000)
 
     cy.get(':nth-child(1) > .form-control-input > .d-flex > .form-control').select(prestador.estado);
     cy.wait(1000)
-    //seleciona a cidade
+    // seleciona a cidade
 
-    
+    cy.get('.py-5 > :nth-child(2) > .form-control-input > .d-flex > .form-control').children().eq(3).then((option) => {
+        prestador.cidade = option.val()
+        cy.get('.py-5 > :nth-child(2) > .form-control-input > .d-flex > .form-control').select(option.val())
+    })
 
-    // cy.get('.py-5 > :nth-child(2) > .form-control-input > .d-flex > .form-control').children().eq(3).then((option) => {
-    //     prestador.cidade = option.val()
-    //     cy.get('.py-5 > :nth-child(2) > .form-control-input > .d-flex > .form-control').select(option.val())
-    // })
-    cy.Prestador().as('dadosPrestador')
+    dadosPrestador = prestador;
 });
 
+Cypress.Commands.add('recuperaDados', () => {
+    console.log(JSON.stringify(dadosBeneficiario))
+    console.log(JSON.stringify(dadosInformacoesGuia))
+    console.log(JSON.stringify(dadosProfAssistente))
+});
+
+Cypress.Commands.add('EnviarAnexo', () => {
+    //Anexa o arquivo
+    cy.get('.custom-file-label').selectFile('cypress/fixtures/teste.pdf');
+
+    // Seleciona o tipo do anexo
+    cy.get(':nth-child(2) > .d-flex > .form-control').select('Exame')
+
+    // Descrição
+    const sentencia = faker.lorem.sentence()
+    cy.get('.pt-0 > .gutter-x-14 > .false > .form-control').type(sentencia)
+
+    cy.get('.w-50 > .btn').click()
+})
