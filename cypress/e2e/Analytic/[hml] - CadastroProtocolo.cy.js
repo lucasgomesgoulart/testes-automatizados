@@ -35,6 +35,16 @@ describe('Cadastro protocolo fluxo completo', () => {
 
         //Proxima página
         cy.get('.active > .pt-0 > .justify-content-center > .d-flex > :nth-child(2)').click()
-        cy.recuperaDados()
+
+        // cy.recuperaDados()  RECUPERA OS DADOS DE INPUTS DO PROTOCOLO
+
+        Array.from({ length: 7 }).forEach(() => {
+            cy.cadastraProcedimento()
+        })
+
+        //Avança para tela de Materiais
+        cy.get('.active > .pt-0 > .w-100.justify-content-center > .d-flex > :nth-child(2)').click()
+
+        cy.cadastroMateriais()
     });
 });

@@ -12,7 +12,7 @@ let dadosPrestador;
 let dadosInformacoesGuia;
 let dadosBeneficiario;
 let dadosProfAssistente;
-let dadosAnexo
+let dadosAnexos
 
 Cypress.Commands.add('loginAnalyticHML', (username, password) => {
     cy.get('input[name="username_or_email"]').type(username);
@@ -189,7 +189,7 @@ Cypress.Commands.add('Prestador', () => {
     cy.wait(1000)
     // seleciona a cidade
 
-    cy.get('.py-5 > :nth-child(2) > .form-control-input > .d-flex > .form-control').children().eq(3).then((option) => {
+    cy.get('.py-5 > :nth-child(2) > .form-control-input > .d-flex > .form-control').children().eq(1).then((option) => {
         prestador.cidade = option.val()
         cy.get('.py-5 > :nth-child(2) > .form-control-input > .d-flex > .form-control').select(option.val())
     })
@@ -215,11 +215,50 @@ Cypress.Commands.add('EnviarAnexo', () => {
     dadosAnexo.descricao = (sentencia)
     cy.get('.pt-0 > .gutter-x-14 > .false > .form-control').type(sentencia)
     cy.get('.w-50 > .btn').click()
+
+    dadosAnexos = dadosAnexo
+
 })
 
 Cypress.Commands.add('recuperaDados', () => {
     console.log(JSON.stringify(dadosBeneficiario))
     console.log(JSON.stringify(dadosInformacoesGuia))
     console.log(JSON.stringify(dadosProfAssistente))
-    console.log(JSON.stringify(dadosAnexo))
+    console.log(JSON.stringify(dadosAnexos))
 });
+
+Cypress.Commands.add('cadastraProcedimento', () => {
+    let dadosProcedimentos = {}
+
+    const procedimentos = ['10101012', '10101020', '10101039', '10102019', '10103015', '10103023', '10103031', '10104011', '10104020', '10105034', '10105042', '10105050', '10105069',
+        '10105077', '10106014', '10106030', '10106049', '10106065', '10106073', '10106090', '10106103', '10106111', '10106120', '10106138', '10106146', '20101015', '20101023', '20101074',
+        '20101082', '20101090', '20101104', '20101112', '20101120', '20101139', '20101155', '20101171', '20101198', '20101210', '20101228', '20101236', '20102011', '20102020', '20102038',
+        '20102062', '20102070', '20102089', '20102097', '20102100', '20102119', '20102127', '20102135', '20102143', '20103018', '20103026', '20103034', '20103042', '20103050', '20103069',
+        '20103077', '20103093', '20103107', '20103115', '20103123', '20103131', '20103140', '20103158', '20103166', '20103174', '20103182', '20103190', '20103204', '20103212', '20103220',
+        '20103239', '20103247', '20103255', '20103263', '20103271', '20103280', '20103298', '20103301', '20103310', '20103328', '20103336', '20103344', '20103360', '20103379', '20103387',
+        '20103395', '20103409', '20103417', '20103425', '20103433', '20103441', '20103450', '20103468', '20103476', '20103484', '20103492', '20103506', '20103514', '20103522', '20103530',
+        '20103549', '20103557', '20103565', '20103573', '20103581', '20103590', '20103603', '20103611', '20103620', '20103638', '20103646', '20103654', '20103662', '20103670', '20103689',
+        '20103697', '20103700', '20103719', '20103743', '20103751', '20104014', '20104022', '20104049', '20104057', '20104065', '20104073', '20104081', '20104090', '20104103', '20104111',
+        '20104120', '20104138', '20104146', '20104154', '20104170', '20104189', '20104197', '20104200', '20104219', '20104227', '20104235', '20104243', '20104260', '20104278', '20104294',
+        '20104316', '20104324', '20104332', '20104340', '20104359', '20104367', '20104375', '20104383', '20104391', '20104405', '20104413', '20104421', '20104430', '20105010', '20105029',
+        '20105037', '20201010', '20201028', '20201036', '20201044', '20201052', '20201060', '20201079', '20201087', '20201095', '20201109', '20201117', '20201125', '20201133', '20202016',
+        '20202024', '20202032', '20202040', '20202059', '20202067', '20203012', '20203020', '20203047', '20203063', '20203071', '20204027', '20204035', '20204043', '20204086', '20204159',
+        '20204167', '20204175', '30101018', '30101026', '30101034', '30101042', '30101050'];
+
+    const indiceAleatorio = Math.floor(Math.random() * procedimentos.length);
+    dadosProcedimentos.procedimento = procedimentos[indiceAleatorio];
+
+    // Seleciona o procedimento
+    cy.get('.d-flex.mb-5 > .flex-column > :nth-child(1) > .align-items-center > .w-100 > .css-yk16xz-control > .css-1hwfws3').type(dadosProcedimentos.procedimento);
+
+    cy.get('#react-select-6-option-0').should('be.visible').click();
+
+    // Inserir
+    cy.get('.procedures-button-insert').click();
+});
+
+Cypress.Commands.add('cadastroMateriais', () => {
+
+
+    cy.get(':nth-child(1) > .col-md-4 > .form-control-input > .form-control').type(faker.datatype.number({ min: 10000000000 }))
+})
