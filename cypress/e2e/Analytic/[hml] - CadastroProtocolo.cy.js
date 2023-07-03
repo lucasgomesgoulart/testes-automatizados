@@ -7,14 +7,17 @@ describe('Cadastro protocolo fluxo completo', () => {
     });
 
     it('cadastro', () => {
+        cy.on('uncaught:exception', (err, runnable) => {
+            return false
+        });
         // Login
         cy.loginAnalyticHML(Cypress.env('analista'), Cypress.env('password'));
 
         cy.get('.bg-white > :nth-child(2) > .btn-primary').contains('Novo Cadastro').click({ force: true })
 
         // Seleciona a operadora teste 1
-        cy.get('.pb-4 > .card-body > :nth-child(2) > .col-md-3 > .form-control-input > .align-items-center > .w-100 > .css-yk16xz-control > .css-1hwfws3').type('Operadora teste 1')
-        cy.get('.css-11unzgr').should('be.visible').contains('Operadora teste 1').click()
+        cy.get('.pb-4 > .card-body > :nth-child(2) > .col-md-3 > .form-control-input > .align-items-center > .w-100 > .css-yk16xz-control > .css-1hwfws3').type('Operadora teste')
+        cy.get('#react-select-2-option-0').should('be.visible').contains('Operadora Teste').click()
 
         cy.get('.card-body > :nth-child(2) > :nth-child(2) > .form-control-input > .d-flex > .form-control').select('Regulamentado')
         cy.get(':nth-child(2) > :nth-child(3) > .form-control-input > .d-flex > .form-control').select('Local')

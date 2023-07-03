@@ -11,7 +11,8 @@
   "description": "Testes automatizados primeiro projeto",
   "main": "index.js",
   "scripts": {
-    "test": "npx cypress open"
+    "test": "npx cypress open",
+    "testProd": "npx cypress run --spec \"cypress/e2e/Analytic/[prod]CadastroProtocolo.cy.js\""
   },
   "repository": {
     "type": "git",
