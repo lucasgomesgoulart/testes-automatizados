@@ -1,9 +1,9 @@
 import 'cypress-file-upload';
 
 
-describe('Cadastro protocolo fluxo completo', () => {
+describe('Cadastra Protocolo e armazena dados', () => {
     beforeEach(() => {
-        cy.visit('https://app.analyticare.com.br/authentication/login');
+        cy.visit('/');
     });
 
     it('cadastro', () => {
@@ -12,17 +12,7 @@ describe('Cadastro protocolo fluxo completo', () => {
         });
         // Login
         cy.loginAnalyticHML(Cypress.env('analistaProd'), Cypress.env('password'));
-
-        cy.get('.bg-white > :nth-child(2) > .btn-primary').contains('Novo Cadastro').click({ force: true })
-
-        // Seleciona a operadora teste 1
-        cy.get('.pb-4 > .card-body > :nth-child(2) > .col-md-3 > .form-control-input > .align-items-center > .w-100 > .css-yk16xz-control > .css-1hwfws3').type('Operadora')
-        cy.get('#react-select-2-option-1').should('be.visible').contains('Operadora Teste 2').click()
-
-        cy.get('.card-body > :nth-child(2) > :nth-child(2) > .form-control-input > .d-flex > .form-control').select('Regulamentado')
-        cy.get(':nth-child(2) > :nth-child(3) > .form-control-input > .d-flex > .form-control').select('Local')
-
-        //Valida e preenche: Caracteristicas do Protocolo
+        cy.CadastroInicio()
         cy.CaracterísticasProtocolo()
         cy.InformacoesGuia()
         cy.Beneficiario()
@@ -59,15 +49,17 @@ describe('Cadastro protocolo fluxo completo', () => {
         cy.buscaDados();
     });
 
-    it.only('Revisao', () => {
+    it('Valida/Edita/Valida Beneficiário', () => {
 
         cy.on('uncaught:exception', (err, runnable) => {
             return false
         });
+        cy.wait(1500)
         cy.loginAnalyticHML(Cypress.env('analistaProd'), Cypress.env('password'));
 
         //Busca pelo protocolo na tabela, e clica
-        cy.get('.rt-tbody').contains('202307AC00011').click()
+        cy.get('.rt-tbody').contains(Cypress.env('protocoloFinal')).click()
+        // cy.get('.rt-tbody').contains('202307AC00027').click()
 
         //Inicia análise
         cy.get('.breadcrumb-body').then($breadcrumb => {
@@ -78,6 +70,6 @@ describe('Cadastro protocolo fluxo completo', () => {
 
         cy.RevisacaracteristicasProtocolo()
         cy.RevisaBeneficiario()
-
+        cy.editaBeneficiario()
     })
 });

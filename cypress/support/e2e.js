@@ -14,8 +14,6 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
-import './cadastroAdviceMedCmd.js'
 import './analyticAnalistaCadastro.js'
 import './analyticAnalistaRevisao.js'
 

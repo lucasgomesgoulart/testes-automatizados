@@ -6,7 +6,7 @@ module.exports = defineConfig({
   defaultCommandTimeout: 20000,
   experimentalMemoryManagement: true,
   e2e: {
-    // baseUrl: 'https://app.analyticare.com.br/authentication/login',
+    baseUrl: 'https://app.analyticare.com.br/authentication/login',
 
     mochaOptions: {
       reporter: "mochawesome",

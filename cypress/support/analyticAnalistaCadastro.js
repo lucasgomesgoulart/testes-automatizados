@@ -24,8 +24,21 @@ Cypress.Commands.add('loginAnalyticHML', (username, password) => {
     cy.get('input[name="username_or_email"]').type(username);
     cy.get('input[name="password"]').type(password);
     cy.get('.button-login > .btn').click();
-    cy.url({ timeout: 10000 }).should('include', '/protocolos/listar');
+    // Esperar a página carregar
+    cy.wait(1500)
 });
+
+Cypress.Commands.add('CadastroInicio', () => {
+
+    cy.get('.bg-white > :nth-child(2) > .btn-primary').contains('Novo Cadastro').click({ force: true })
+
+    // Seleciona a operadora teste 1
+    cy.get('.pb-4 > .card-body > :nth-child(2) > .col-md-3 > .form-control-input > .align-items-center > .w-100 > .css-yk16xz-control > .css-1hwfws3').type('Operadora')
+    cy.get('#react-select-2-option-1').should('be.visible').contains('Operadora Teste').click()
+
+    cy.get('.card-body > :nth-child(2) > :nth-child(2) > .form-control-input > .d-flex > .form-control').select('Regulamentado')
+    cy.get(':nth-child(2) > :nth-child(3) > .form-control-input > .d-flex > .form-control').select('Local')
+})
 
 Cypress.Commands.add('CaracterísticasProtocolo', () => {
     cy.get('.pb-4 > .card-body > .pt-5')
@@ -115,10 +128,10 @@ Cypress.Commands.add('Beneficiario', () => {
     beneficiario.email = faker.internet.email()
     cy.get(':nth-child(3) > .card-body > :nth-child(5) > .col-md-4 > .form-control-input > .form-control').type(beneficiario.email)
 
-    beneficiario.celular = faker.phone.phoneNumber('+91 ##########')
+    beneficiario.celular = faker.phone.phoneNumber('+91 #########')
     cy.get(':nth-child(3) > .card-body > :nth-child(5) > :nth-child(2) > .form-control-input > .form-control').type(beneficiario.celular)
 
-    beneficiario.telefone = faker.phone.phoneNumber('+91 ##########')
+    beneficiario.telefone = faker.phone.phoneNumber('+91 #########')
     cy.get(':nth-child(3) > .card-body > :nth-child(5) > :nth-child(3) > .form-control-input > .form-control').type(beneficiario.telefone)
 
     dadosBeneficiario = beneficiario;
